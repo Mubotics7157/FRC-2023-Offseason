@@ -6,9 +6,12 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.util.CommonConversions;
+import frc.robot.util.Shooting.ShotGenerator;
 
 public class Hood extends SubsystemBase{
 
@@ -16,15 +19,20 @@ public class Hood extends SubsystemBase{
         OFF,
         JOG,
         SETPOINT,
+        DYNAMIC,
         ZERO
     }
     
     private static Hood instance = new Hood();
 
     WPI_TalonFX hoodMotor = new WPI_TalonFX(HoodConstants.DEVICE_ID_HOOD);
-    private Rotation2d setpoint = new Rotation2d();
+    private Rotation2d currentSetpoint = new Rotation2d();
     public double jogVal = 0;
     private HoodState hoodState = HoodState.SETPOINT;
+
+    DigitalInput limSwitch = new DigitalInput(HoodConstants.DEVICE_ID_LIMIT_SWITCH);
+
+    ShotGenerator shotGen = new ShotGenerator();
     
     public Hood(){
 
@@ -62,12 +70,20 @@ public class Hood extends SubsystemBase{
             case OFF:
                 hoodMotor.set(ControlMode.PercentOutput, 0);
                 break;
+
             case JOG:
                 hoodMotor.set(ControlMode.PercentOutput, jogVal);
                 break;
+
             case SETPOINT:
                 goToSetpoint();
                 break;
+
+            case DYNAMIC:
+                currentSetpoint = shotGen.getInterpolatedHood(VisionManager.getInstance().getDistanceToTarget());
+                //SmartDashboard.putNumber("interpolated hood angle", currentSetpoint.getDegrees());
+                break;
+
             case ZERO:
                 zeroRoutine();
                 break;
@@ -75,7 +91,7 @@ public class Hood extends SubsystemBase{
     }
 
     public void goToSetpoint(){
-        hoodMotor.set(ControlMode.Position, CommonConversions.radiansToSteps(setpoint.getDegrees(), HoodConstants.HOOD_GEARING));
+        hoodMotor.set(ControlMode.Position, CommonConversions.radiansToSteps(currentSetpoint.getDegrees(), HoodConstants.HOOD_GEARING));
     }
 
     /*
@@ -84,19 +100,39 @@ public class Hood extends SubsystemBase{
     }
     */
 
-    public void setSetpoint(Rotation2d setpoint){
-        this.setpoint = setpoint;
+    public void setSetpoint(Rotation2d wantedSetpoint){
+        currentSetpoint = wantedSetpoint;
     }
 
     public Rotation2d getAngle(){
         return Rotation2d.fromRadians(CommonConversions.stepsToRadians(hoodMotor.getSelectedSensorPosition(), HoodConstants.HOOD_GEARING));
     }
+
+    public boolean atSetpoint(){
+        return Math.abs(getAngle().getDegrees() - currentSetpoint.getDegrees()) < 2;
+    }
+
     public void zeroRoutine(){
 
+        if(!limSwitch.get()) //if switch is not hit
+            hoodMotor.set(ControlMode.PercentOutput, 0.1);
+
+        else{ //if the switch is hit
+            hoodMotor.set(ControlMode.PercentOutput, 0);
+            hoodMotor.setSelectedSensorPosition(0);
+        }
+    }
+
+    public boolean isZeroed(){
+        return limSwitch.get();
     }
 
     public void setState(HoodState state){
         hoodState = state;
+    }
+
+    public HoodState getState(){
+        return hoodState;
     }
 
     

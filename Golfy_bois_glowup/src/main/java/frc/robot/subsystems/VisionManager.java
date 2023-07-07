@@ -11,6 +11,8 @@ public class VisionManager extends SubsystemBase{
 
     private Limelight turretLL;
 
+    private double lastKnownDistance = 0;
+
     public VisionManager(){
 
         turretLL = new Limelight(VisionConstants.TURRET_LL_NAME);
@@ -30,6 +32,18 @@ public class VisionManager extends SubsystemBase{
 
     public Limelight getTurretLL(){
         return turretLL;
+    }
+
+    public double getDistanceToTarget(){
+        if(turretLL.hasTargets()){
+            double distance = (VisionConstants.TARGET_HEIGHT_METERS - VisionConstants.TURRET_LL_HEIGHT_METERS) / Math.tan(VisionConstants.TURRET_LL_MOUNTING_PITCH_RADIANS + turretLL.getTargetPitch().getRadians());
+
+            lastKnownDistance = distance;
+            return distance;
+        }
+
+        else
+            return lastKnownDistance;
     }
 
     public void logData(){
