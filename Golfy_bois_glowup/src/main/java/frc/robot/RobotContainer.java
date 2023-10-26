@@ -8,6 +8,7 @@ import frc.robot.Constants.OperatorConstants;
 
 import frc.robot.commands.drive.DriveArcade;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.Tracker;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -24,6 +25,7 @@ public class RobotContainer {
 
   private final Drive drive = Drive.getInstance();
   private final Tracker tracker = Tracker.getInstance();
+  private final SuperStructure superStructure = SuperStructure.getInstance();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -46,11 +48,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-  
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
+    
+    
   }
 
   /**

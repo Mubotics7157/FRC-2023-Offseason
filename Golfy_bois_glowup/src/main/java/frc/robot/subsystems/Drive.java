@@ -111,12 +111,12 @@ public class Drive extends SubsystemBase{
         setSpeeds(wheelSpeeds);
     }
 
-    public void tankDrive(double left, double right){
+    public void tankDrive(double leftInput, double rightInput){
         //DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds(modifyInputs(left, false), modifyInputs(right, false));
 
         setSpeeds(new DifferentialDriveWheelSpeeds(
-            modifyInputs(left, false),
-            modifyInputs(right, false)
+            modifyInputs(leftInput, false),
+            modifyInputs(rightInput, false)
             ));
     }
 
