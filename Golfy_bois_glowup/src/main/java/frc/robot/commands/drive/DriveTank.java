@@ -2,8 +2,10 @@ package frc.robot.commands.drive;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
+import frc.robot.util.Mutil;
 
 public class DriveTank extends CommandBase{
     
@@ -26,13 +28,21 @@ public class DriveTank extends CommandBase{
 
     @Override
     public void execute() {
-        drive.tankDrive(leftAxis.getAsDouble(), rightAxis.getAsDouble());
+        tankDrive(leftAxis.getAsDouble(), rightAxis.getAsDouble());
     }
 
     @Override
     public void end(boolean interrupted) {
-        drive.tankDrive(0, 0);
+        tankDrive(0, 0);
     }
 
+    public void tankDrive(double leftInput, double rightInput){
+        //DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds(modifyInputs(left, false), modifyInputs(right, false));
+
+        drive.setSpeeds(new DifferentialDriveWheelSpeeds(
+            Mutil.modifyInputs(leftInput, false),
+            Mutil.modifyInputs(rightInput, false)
+            ));
+    }
 
 }

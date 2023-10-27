@@ -8,6 +8,8 @@ import frc.robot.Constants.OperatorConstants;
 
 import frc.robot.commands.drive.DriveArcade;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.Tracker;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,6 +28,8 @@ public class RobotContainer {
   private final Drive drive = Drive.getInstance();
   private final Tracker tracker = Tracker.getInstance();
   private final SuperStructure superStructure = SuperStructure.getInstance();
+  private final Hood hood = Hood.getInstance();
+  private final Shooter shooter = Shooter.getInstance();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =

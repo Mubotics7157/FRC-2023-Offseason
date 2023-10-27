@@ -21,11 +21,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.util.CommonConversions;
+import frc.robot.util.Mutil;
 
 public class Drive extends SubsystemBase{
     
@@ -42,6 +45,70 @@ public class Drive extends SubsystemBase{
     public Drive(){
         gyro.reset();
 
+        configMotors();
+    }
+
+    public static Drive getInstance(){
+        if(instance == null)
+            return new Drive();
+        else
+            return instance;
+    }
+
+    @Override
+    public void periodic() {
+        logData();
+    }
+
+    public void logData(){
+        SmartDashboard.putNumber("left speed", getLeftSpeed());
+        SmartDashboard.putNumber("right speed", getRightSpeed());
+    }
+
+    public Rotation2d getHeading(){
+        return gyro.getRotation2d();
+    }
+
+    public void resetHeading(){
+        gyro.reset();
+    }
+
+    public void setSpeeds(DifferentialDriveWheelSpeeds speeds){
+        setSpeeds(speeds.leftMetersPerSecond, speeds.rightMetersPerSecond);
+    }
+
+    public void setSpeeds(double leftMPS, double rightMPS){
+        double leftSpeed = CommonConversions.metersPerSecToStepsPerDecisec(leftMPS, DriveConstants.WHEEL_DIAMETER_METERS);
+        double rightSpeed = CommonConversions.metersPerSecToStepsPerDecisec(rightMPS, DriveConstants.WHEEL_DIAMETER_METERS);
+
+        leftMaster.set(ControlMode.Velocity, leftSpeed);
+        rightMaster.set(ControlMode.Velocity, rightSpeed);
+    }
+
+    public double getLeftDistance(){
+        return CommonConversions.stepsToMeters(leftMaster.getSelectedSensorPosition());
+    }
+
+    public double getRightDistance(){
+        return CommonConversions.stepsToMeters(leftSlave.getSelectedSensorPosition());
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds(){
+        return new DifferentialDriveWheelSpeeds(
+            getLeftSpeed(),
+            getRightSpeed()
+        );
+    }
+
+    public double getLeftSpeed(){
+        return CommonConversions.stepsPerDecisecToMetersPerSec(leftMaster.getSelectedSensorVelocity());
+    }
+
+    public double getRightSpeed(){
+        return CommonConversions.stepsPerDecisecToMetersPerSec(rightMaster.getSelectedSensorVelocity());
+    }
+
+    private void configMotors(){
         leftMaster.configFactoryDefault();
         leftSlave.configFactoryDefault();
         rightMaster.configFactoryDefault();
@@ -67,115 +134,6 @@ public class Drive extends SubsystemBase{
         leftMaster.configPeakOutputReverse(-1);
         rightMaster.configPeakOutputForward(1);
         rightMaster.configPeakOutputReverse(-1);
-
     }
 
-    public static Drive getInstance(){
-        if(instance == null)
-            return new Drive();
-        else
-            return instance;
-    }
-
-    @Override
-    public void periodic() {
-        
-    }
-
-    public void logData(){
-
-    }
-
-    public Rotation2d getHeading(){
-        return gyro.getRotation2d();
-    }
-
-    public void resetHeading(){
-        gyro.reset();
-    }
-
-    public void setSpeeds(DifferentialDriveWheelSpeeds speeds){
-        double leftSpeed = CommonConversions.metersPerSecToStepsPerDecisec(speeds.leftMetersPerSecond, DriveConstants.WHEEL_DIAMETER_METERS);
-        double rightSpeed = CommonConversions.metersPerSecToStepsPerDecisec(speeds.rightMetersPerSecond, DriveConstants.WHEEL_DIAMETER_METERS);
-
-        leftMaster.set(ControlMode.Velocity, leftSpeed);
-        rightMaster.set(ControlMode.Velocity, rightSpeed);
-    }
-
-    public void arcadeDrive(double fwd, double turn){
-        DifferentialDriveWheelSpeeds wheelSpeeds = DriveConstants.DRIVE_KINEMATICS.toWheelSpeeds(new ChassisSpeeds(
-            modifyInputs(fwd, false),
-            0.0,
-            modifyInputs(turn, true)));
-
-        setSpeeds(wheelSpeeds);
-    }
-
-    public void tankDrive(double leftInput, double rightInput){
-        //DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds(modifyInputs(left, false), modifyInputs(right, false));
-
-        setSpeeds(new DifferentialDriveWheelSpeeds(
-            modifyInputs(leftInput, false),
-            modifyInputs(rightInput, false)
-            ));
-    }
-
-    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
-            if(isFirstPath)
-                Tracker.getInstance().setPose(traj.getInitialPose());
-
-        return new SequentialCommandGroup(
-            new PPRamseteCommand(
-                traj, 
-                Tracker.getInstance()::getPose, // Pose supplier
-                new RamseteController(),
-                DriveConstants.DRIVE_FEEDFORWARD,
-                DriveConstants.DRIVE_KINEMATICS, // DifferentialDriveKinematics
-                this::getWheelSpeeds, // DifferentialDriveWheelSpeeds supplier
-                new PIDController(0, 0, 0), // Left controller. Tune these values for your robot. Leaving them 0 will only use feedforwards.
-                new PIDController(0, 0, 0), // Right controller (usually the same values as left controller)
-                this::outputVolts, // Voltage biconsumer
-                true, // Should the path be automatically mirrored depending on alliance color. Optional, defaults to true
-                this // Requires this drive subsystem
-            ));
-    }
-    
-    public void outputVolts(double leftVolts, double rightVolts){
-        leftMaster.setVoltage(leftVolts);
-        rightMaster.setVoltage(rightVolts);
-    }
-
-    public double getLeftDistance(){
-        return CommonConversions.stepsToMeters(leftMaster.getSelectedSensorPosition());
-    }
-
-    public double getRightDistance(){
-        return CommonConversions.stepsToMeters(leftSlave.getSelectedSensorPosition());
-    }
-
-    public DifferentialDriveWheelSpeeds getWheelSpeeds(){
-        return new DifferentialDriveWheelSpeeds(
-            CommonConversions.stepsPerDecisecToMetersPerSec(leftMaster.getSelectedSensorVelocity()),
-            CommonConversions.stepsPerDecisecToMetersPerSec(rightMaster.getSelectedSensorVelocity())
-        );
-    }
-
-    private double modifyInputs(double val, boolean isRot){
-        if(isRot){
-            if(Math.abs(val) < 0.1){
-                val = 0;
-            }
-            //return val*DriveConstants.MAX_TELE_ANGULAR_VELOCITY;
-            //val = Math.copySign(Math.pow(val, 2),val);
-            return val * DriveConstants.MAX_TELE_ANGULAR_VELOCITY;
-        }
-        else{
-            if(Math.abs(val) < 0.1){
-                val = 0;
-            }
-            //return val*DriveConstants.MAX_TELE_TANGENTIAL_VELOCITY;
-            //val = Math.copySign(Math.pow(val, 2),val);
-            return val * DriveConstants.MAX_TELE_TANGENTIAL_VELOCITY;
-        }
-    }
 }

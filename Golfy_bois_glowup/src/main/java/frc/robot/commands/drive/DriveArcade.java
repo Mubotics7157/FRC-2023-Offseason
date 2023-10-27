@@ -2,8 +2,12 @@ package frc.robot.commands.drive;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
+import frc.robot.util.Mutil;
 
 public class DriveArcade extends CommandBase{
     
@@ -26,12 +30,21 @@ public class DriveArcade extends CommandBase{
 
     @Override
     public void execute() {
-        drive.arcadeDrive(fwd.getAsDouble(), turn.getAsDouble());
+        arcadeDrive(fwd.getAsDouble(), turn.getAsDouble());
     }
 
     @Override
     public void end(boolean interrupted) {
-        drive.arcadeDrive(0, 0);
+        arcadeDrive(0, 0);
+    }
+
+    public void arcadeDrive(double fwd, double turn){
+        DifferentialDriveWheelSpeeds wheelSpeeds = DriveConstants.DRIVE_KINEMATICS.toWheelSpeeds(new ChassisSpeeds(
+            Mutil.modifyInputs(fwd, false),
+            0.0,
+            Mutil.modifyInputs(turn, true)));
+
+        drive.setSpeeds(wheelSpeeds);
     }
 
 

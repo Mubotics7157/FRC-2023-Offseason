@@ -16,7 +16,7 @@ public class Tracker extends SubsystemBase{
     
     private static Tracker instance = new Tracker();
 
-    private Drive drive = Drive.getInstance();
+    private final Drive drive = Drive.getInstance();
 
     private final Field2d m_field = new Field2d();
 
@@ -65,6 +65,6 @@ public class Tracker extends SubsystemBase{
         return estimator.getEstimatedPosition();
     }
     public void resetHeading(){
-        estimator.resetPosition(drive.getHeading(), drive.getLeftDistance(), drive.getRightDistance(), new Pose2d(estimator.getEstimatedPosition().getTranslation(), Rotation2d.fromDegrees(0)));
+        estimator.resetPosition(drive.getHeading(), drive.getLeftDistance(), drive.getRightDistance(), new Pose2d(getPose().getTranslation(), Rotation2d.fromDegrees(0)));
     }
 }
