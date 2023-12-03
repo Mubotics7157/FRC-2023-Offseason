@@ -5,11 +5,12 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
-
+import frc.robot.commands.autos.TestAuto;
 import frc.robot.commands.drive.DriveArcade;
 import frc.robot.commands.drive.DriveTank;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.PathHandler;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.Tracker;
@@ -30,6 +31,7 @@ public class RobotContainer {
 
   private final Drive drive = Drive.getInstance();
   private final Tracker tracker = Tracker.getInstance();
+  private final PathHandler handler = PathHandler.getInstance();
   //private final SuperStructure superStructure = SuperStructure.getInstance();
   //private final Hood hood = Hood.getInstance();
   //private final Shooter shooter = Shooter.getInstance();
@@ -71,6 +73,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return null;
+    return new TestAuto(handler);
   }
 }

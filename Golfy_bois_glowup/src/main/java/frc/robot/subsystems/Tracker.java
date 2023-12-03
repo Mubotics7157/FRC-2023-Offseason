@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.MatBuilder;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
@@ -20,7 +22,15 @@ public class Tracker extends SubsystemBase{
 
     private final Field2d m_field = new Field2d();
 
-    private DifferentialDrivePoseEstimator estimator = new DifferentialDrivePoseEstimator(DriveConstants.DRIVE_KINEMATICS, drive.getHeading(), drive.getLeftDistance(), drive.getRightDistance(), new Pose2d(),
+    private DifferentialDriveOdometry odom = new DifferentialDriveOdometry(drive.getHeading(), drive.getLeftDistance(), drive.getRightDistance());
+
+    private DifferentialDrivePoseEstimator estimator = new DifferentialDrivePoseEstimator(
+        DriveConstants.DRIVE_KINEMATICS,
+        drive.getHeading(),
+        drive.getLeftDistance(),
+        drive.getRightDistance(),
+        new Pose2d(),
+
     new MatBuilder<>(Nat.N3(), Nat.N1()).fill(
             .1,
             .1,
@@ -39,10 +49,9 @@ public class Tracker extends SubsystemBase{
 
     @Override
     public void periodic() {
-        if(DriverStation.isEnabled()){
-            updatePose();
-            m_field.setRobotPose(getPose());
-        }
+        updatePose();
+        logData();
+        m_field.setRobotPose(getPose());
     }
 
 
@@ -51,6 +60,10 @@ public class Tracker extends SubsystemBase{
             return new Tracker();
         else
             return instance;
+    }
+
+    public void logData(){
+        Logger.getInstance().recordOutput("Estimator Pose", getPose());
     }
 
     private void updatePose(){
