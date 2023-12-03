@@ -42,10 +42,16 @@ public class Drive extends SubsystemBase{
 
     private WPI_Pigeon2 gyro = new WPI_Pigeon2(DriveConstants.DEVICE_ID_PIGEON);
 
+    private double driveFactor = DriveConstants.MAX_TELE_TANGENTIAL_VELOCITY;
+
     public Drive(){
         gyro.reset();
 
         configMotors();
+
+        SmartDashboard.putNumber("drive kP", 0);
+        SmartDashboard.putNumber("drive kD", 0);
+        SmartDashboard.putNumber("drive kF", 0);
     }
 
     public static Drive getInstance(){
@@ -63,6 +69,9 @@ public class Drive extends SubsystemBase{
     public void logData(){
         SmartDashboard.putNumber("left speed", getLeftSpeed());
         SmartDashboard.putNumber("right speed", getRightSpeed());
+
+        SmartDashboard.putNumber("gyro heading", getHeading().getDegrees());
+
     }
 
     public Rotation2d getHeading(){
@@ -77,9 +86,17 @@ public class Drive extends SubsystemBase{
         setSpeeds(speeds.leftMetersPerSecond, speeds.rightMetersPerSecond);
     }
 
+    public void setPercent(double left, double right){
+        leftMaster.set(ControlMode.PercentOutput, left);
+        rightMaster.set(ControlMode.PercentOutput, right);
+    }
+    
     public void setSpeeds(double leftMPS, double rightMPS){
         double leftSpeed = CommonConversions.metersPerSecToStepsPerDecisec(leftMPS, DriveConstants.WHEEL_DIAMETER_METERS);
         double rightSpeed = CommonConversions.metersPerSecToStepsPerDecisec(rightMPS, DriveConstants.WHEEL_DIAMETER_METERS);
+
+        SmartDashboard.putNumber("wanted left", leftSpeed);
+        SmartDashboard.putNumber("wanted right", rightSpeed);
 
         leftMaster.set(ControlMode.Velocity, leftSpeed);
         rightMaster.set(ControlMode.Velocity, rightSpeed);
@@ -100,15 +117,35 @@ public class Drive extends SubsystemBase{
         );
     }
 
-    public double getLeftSpeed(){
+    private double getLeftSpeed(){
         return CommonConversions.stepsPerDecisecToMetersPerSec(leftMaster.getSelectedSensorVelocity());
     }
 
-    public double getRightSpeed(){
+    private double getRightSpeed(){
         return CommonConversions.stepsPerDecisecToMetersPerSec(rightMaster.getSelectedSensorVelocity());
     }
 
+    public void setDriveFactor(double newFactor){
+        driveFactor = newFactor;
+    }
+
+    public double getDriveFactor(){
+        return driveFactor;
+    }
+
+    public void configGains(){
+        leftMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
+        leftMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
+        leftMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
+
+        rightMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
+        rightMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
+        rightMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
+
+    }
+
     private void configMotors(){
+
         leftMaster.configFactoryDefault();
         leftSlave.configFactoryDefault();
         rightMaster.configFactoryDefault();
@@ -132,6 +169,7 @@ public class Drive extends SubsystemBase{
 
         leftMaster.configPeakOutputForward(1);
         leftMaster.configPeakOutputReverse(-1);
+
         rightMaster.configPeakOutputForward(1);
         rightMaster.configPeakOutputReverse(-1);
     }

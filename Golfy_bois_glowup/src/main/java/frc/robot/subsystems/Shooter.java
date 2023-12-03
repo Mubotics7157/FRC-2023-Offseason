@@ -31,7 +31,7 @@ public class Shooter extends SubsystemBase{
 
     private double jogValue = 0;
 
-    ShotGenerator shotGen = new ShotGenerator();
+    ShotGenerator shotGen = ShotGenerator.getInstance();
 
     public Shooter(){
 
@@ -48,7 +48,7 @@ public class Shooter extends SubsystemBase{
 
         shooterMotor.configGetStatorCurrentLimit(new StatorCurrentLimitConfiguration(false, 35, 35, 0.1));
 
-        shooterMotor.setVoltage(12);
+        shooterMotor.configVoltageCompSaturation(12);
         shooterMotor.enableVoltageCompensation(false);
 
     }
@@ -77,8 +77,7 @@ public class Shooter extends SubsystemBase{
                 break;
 
             case DYNAMIC:
-                currentSetpoint = shotGen.getInterpolatedShooter(VisionManager.getInstance().getDistanceToTarget()); //dynamic values using distance PLACEHOLDER
-                goToSetpoint();
+                trackTarget();
                 //SmartDashboard.putNumber("interpolated shooter rpm", currentSetpoint);
                 break;
 
@@ -88,7 +87,13 @@ public class Shooter extends SubsystemBase{
     public void goToSetpoint(){
         shooterMotor.set(ControlMode.Velocity, CommonConversions.RPMToStepsPerDecisec(currentSetpoint, ShooterConstants.SHOOTER_GEARING));
     }
-
+    
+    public void trackTarget(){
+        if(VisionManager.getInstance().getTurretLL().hasTargets())
+            currentSetpoint = shotGen.getInterpolatedShooter(VisionManager.getInstance().getDistanceToTarget()); //dynamic values using distance PLACEHOLDER
+        
+        goToSetpoint();
+    }
     public boolean atSpeed(){
         return Math.abs(getRPM() - currentSetpoint) < 50;
     }

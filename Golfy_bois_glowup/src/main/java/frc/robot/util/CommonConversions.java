@@ -33,7 +33,7 @@ public class CommonConversions {
    * @return encoder units
    */
   public static double metersToSteps(double meters,double wheelDiameter) {
-    return (meters / (wheelDiameter*Math.PI) ) *2048*DriveConstants.DRIVE_GEAR_RATIO;
+    return (meters / (wheelDiameter*Math.PI) ) * 2048 * DriveConstants.DRIVE_GEAR_RATIO;
   }
 
     /**
@@ -41,8 +41,8 @@ public class CommonConversions {
    * @param metersPerSec meters per second
    * @return encoder units per decisecond
    */
-  public static double metersPerSecToStepsPerDecisec(double metersPerSec,double wheelDiameter) {
-    return metersToSteps(metersPerSec,wheelDiameter) * .1d;
+  public static double metersPerSecToStepsPerDecisec(double metersPerSec, double wheelDiameter) {
+    return metersToSteps(metersPerSec, wheelDiameter) * .1d;
   }
 
   public static double RPMToStepsPerDecisec(double velRPM, double gearing){

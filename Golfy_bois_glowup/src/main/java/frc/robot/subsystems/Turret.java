@@ -7,6 +7,7 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -36,6 +37,7 @@ public class Turret extends SubsystemBase{
 
     PIDController rotationController = new PIDController(TurretConstants.TRACKING_KP, TurretConstants.TRACKING_KI, TurretConstants.TRACKING_KD);
 
+    SlewRateLimiter speedLimiter = new SlewRateLimiter(90, 90, 0);
     DigitalInput limSwitch = new DigitalInput(TurretConstants.DEVICE_ID_LIMIT_SWITCH);
 
     public Turret(){

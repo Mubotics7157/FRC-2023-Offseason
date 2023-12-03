@@ -18,6 +18,11 @@ public class ShotGenerator {
         } 
     }
     */
+    private static ShotGenerator instance = new ShotGenerator();
+
+    public static ShotGenerator getInstance(){
+        return instance;
+    }
 
     public class ShooterSetpoint{
 
@@ -42,6 +47,7 @@ public class ShotGenerator {
         {1.81,2.2,2.41,2.92, 3.03, 3.27}, //3.96 last
         {1d,.94,.92,.825, 0.8,.725} //.025 last
     };
+
     SplineInterpolator shooterInterpolator = SplineInterpolator.createMonotoneCubicSpline(Arrays.asList(wheelRPM[0]), Arrays.asList(wheelRPM[1]));
     SplineInterpolator hoodInterpolator = SplineInterpolator.createMonotoneCubicSpline(Arrays.asList(hoodAngle[0]), Arrays.asList(hoodAngle[1]));
 
@@ -53,6 +59,7 @@ public class ShotGenerator {
         double hood = hoodInterpolator.interpolate(distance);
         SmartDashboard.putNumber("interpolated shooter rpm", rpm);
         SmartDashboard.putNumber("interpolated hood angle", hood);
+
         return new ShooterSetpoint(rpm, hood);
     }
 

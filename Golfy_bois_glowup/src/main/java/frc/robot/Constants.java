@@ -24,7 +24,8 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
   public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+    public static final int DEVICE_ID_DRIVER_CONTROLLER = 0;
+    public static final int DEVICE_ID_OPERATOR_CONTROLLER = 1;
   }
 
   public static class DriveConstants{
@@ -34,25 +35,26 @@ public final class Constants {
     public static final double driveKA = 0.19701;
     public static final double driveKP = 0.0018763;
 
-    public static final int DEVICE_ID_LEFT_MASTER = 1;
-    public static final int DEVICE_ID_LEFT_SLAVE = 2;
-    public static final int DEVICE_ID_RIGHT_MASTER = 3;
-    public static final int DEVICE_ID_RIGHT_SLAVE = 4;
+    public static final int DEVICE_ID_LEFT_MASTER = 13;
+    public static final int DEVICE_ID_LEFT_SLAVE = 12;
+    public static final int DEVICE_ID_RIGHT_MASTER = 11;
+    public static final int DEVICE_ID_RIGHT_SLAVE = 10;
 
-    public static final int DEVICE_ID_PIGEON = 5;
+    public static final int DEVICE_ID_PIGEON = 14;
 
-    public static final double DRIVE_GEAR_RATIO = 10.75;
+    public static final double DRIVE_GEAR_RATIO = 8;
 
     public static final String DRIVE_CANIVORE_ID = "drive";
 
     public static final double MAX_TANGENTIAL_VELOCITY = 4.3;
     public static final double MAX_TELE_TANGENTIAL_VELOCITY = 4.3;
+
     public static final double MAX_TELE_ANGULAR_VELOCITY = Math.PI;
 
-    public static final double WHEELBASE_LENGTH = Units.inchesToMeters(20.75);
-    public static final double WHEELBASE_WIDTH = Units.inchesToMeters(20.75);
+    public static final double WHEELBASE_LENGTH = Units.inchesToMeters(29);
+    public static final double WHEELBASE_WIDTH = Units.inchesToMeters(29);
 
-    public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(4);
+    public static final double WHEEL_DIAMETER_METERS = Units.inchesToMeters(6.09);
 
     public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(WHEELBASE_WIDTH);
 

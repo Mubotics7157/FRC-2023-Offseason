@@ -14,11 +14,13 @@ public class DriveArcade extends CommandBase{
     private Drive drive;
     private DoubleSupplier fwd;
     private DoubleSupplier turn;
+    private boolean isClosedLoop;
 
-    public DriveArcade(DoubleSupplier fwd, DoubleSupplier turn, Drive drive){
+    public DriveArcade(DoubleSupplier fwd, DoubleSupplier turn, boolean isClosedLoop, Drive drive){
         this.drive = drive;
         this.fwd = fwd;
         this.turn = turn;
+        this.isClosedLoop = isClosedLoop;
 
         addRequirements(drive);
     }
@@ -30,12 +32,15 @@ public class DriveArcade extends CommandBase{
 
     @Override
     public void execute() {
-        arcadeDrive(fwd.getAsDouble(), turn.getAsDouble());
+        if(isClosedLoop)
+            arcadeDrive(fwd.getAsDouble(), turn.getAsDouble());
+        else
+            arcadeDriveOpen(fwd.getAsDouble(), turn.getAsDouble(), 1);
     }
 
     @Override
     public void end(boolean interrupted) {
-        arcadeDrive(0, 0);
+        arcadeDriveOpen(0, 0, 1);
     }
 
     public void arcadeDrive(double fwd, double turn){
@@ -45,6 +50,13 @@ public class DriveArcade extends CommandBase{
             Mutil.modifyInputs(turn, true)));
 
         drive.setSpeeds(wheelSpeeds);
+    }
+
+    public void arcadeDriveOpen(double fwd, double turn, double turnFactor){
+        double rightSpeed = fwd + (turn * turnFactor);
+        double leftSpeed = fwd - (turn * turnFactor);
+
+        drive.setPercent(leftSpeed, rightSpeed);
     }
 
 

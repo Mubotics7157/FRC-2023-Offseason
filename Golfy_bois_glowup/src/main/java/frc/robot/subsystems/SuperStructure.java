@@ -12,14 +12,15 @@ public class SuperStructure extends SubsystemBase{
     public enum SuperStructureState{
         AUTO,
         CUSTOM,
+        STOW,
         ZERO
     }
 
     private static SuperStructure instance = new SuperStructure();
 
-    private Turret turret = Turret.getInstance();
-    private Hood hood = Hood.getInstance();
-    private Shooter shooter = Shooter.getInstance();
+    private final Turret turret = Turret.getInstance();
+    private final Hood hood = Hood.getInstance();
+    private final Shooter shooter = Shooter.getInstance();
 
     private SuperStructureState currentState = SuperStructureState.AUTO;
 
@@ -63,7 +64,10 @@ public class SuperStructure extends SubsystemBase{
         currentState = wantedState;
 
         switch(currentState){
-
+            case STOW:
+                setAll(null, null, null);
+            break; 
+            
             case AUTO:
                 setTracking();
                 break;
@@ -99,15 +103,23 @@ public class SuperStructure extends SubsystemBase{
         return turret.isZeroed() && hood.isZeroed();
     }
 
-    public void setTracking(){
-        if(turret.getState() != TurretState.DYNAMIC)
-            turret.setState(TurretState.DYNAMIC);
+    public void setStates(TurretState turretState, HoodState hoodState, ShooterState shooterState){
+        if(turret.getState() != turretState)
+            turret.setState(turretState);
         
-        if(hood.getState() != HoodState.DYNAMIC)
-            hood.setState(HoodState.DYNAMIC);
+        if(hood.getState() != hoodState)
+            hood.setState(hoodState);
 
-        if(shooter.getState() != ShooterState.DYNAMIC)
-            shooter.setState(ShooterState.DYNAMIC);
+        if(shooter.getState() != shooterState)
+            shooter.setState(shooterState);
+    }
+
+    public void setTracking(){
+        setStates(
+            TurretState.DYNAMIC,
+            HoodState.DYNAMIC,
+            ShooterState.DYNAMIC
+        );
     }
 
     public void setAll(Rotation2d turretAng, Rotation2d hoodAng, Double shooterSpeed){

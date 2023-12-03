@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.util.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -32,7 +33,7 @@ public class Hood extends SubsystemBase{
 
     DigitalInput limSwitch = new DigitalInput(HoodConstants.DEVICE_ID_LIMIT_SWITCH);
 
-    ShotGenerator shotGen = new ShotGenerator();
+    ShotGenerator shotGen = ShotGenerator.getInstance();
     
     public Hood(){
 
@@ -50,7 +51,6 @@ public class Hood extends SubsystemBase{
         hoodMotor.enableVoltageCompensation(false);
         
         hoodMotor.config_kP(0, HoodConstants.HOOD_KP);
-
 
 
     }
@@ -80,7 +80,7 @@ public class Hood extends SubsystemBase{
                 break;
 
             case DYNAMIC:
-                currentSetpoint = shotGen.getInterpolatedHood(VisionManager.getInstance().getDistanceToTarget());
+                trackTarget();
                 //SmartDashboard.putNumber("interpolated hood angle", currentSetpoint.getDegrees());
                 break;
 
@@ -110,6 +110,11 @@ public class Hood extends SubsystemBase{
 
     public boolean atSetpoint(){
         return Math.abs(getAngle().getDegrees() - currentSetpoint.getDegrees()) < 2;
+    }
+
+    public void trackTarget(){
+        if(VisionManager.getInstance().getTurretLL().hasTargets())
+            currentSetpoint = shotGen.getInterpolatedHood(VisionManager.getInstance().getDistanceToTarget());
     }
 
     public void zeroRoutine(){

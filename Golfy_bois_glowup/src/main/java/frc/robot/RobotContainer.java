@@ -7,12 +7,15 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 
 import frc.robot.commands.drive.DriveArcade;
+import frc.robot.commands.drive.DriveTank;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.Tracker;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -27,19 +30,24 @@ public class RobotContainer {
 
   private final Drive drive = Drive.getInstance();
   private final Tracker tracker = Tracker.getInstance();
-  private final SuperStructure superStructure = SuperStructure.getInstance();
-  private final Hood hood = Hood.getInstance();
-  private final Shooter shooter = Shooter.getInstance();
+  //private final SuperStructure superStructure = SuperStructure.getInstance();
+  //private final Hood hood = Hood.getInstance();
+  //private final Shooter shooter = Shooter.getInstance();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+      new CommandXboxController(OperatorConstants.DEVICE_ID_DRIVER_CONTROLLER);
+
+  private final CommandJoystick m_operatorController = 
+      new CommandJoystick(OperatorConstants.DEVICE_ID_OPERATOR_CONTROLLER);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
-    drive.setDefaultCommand(new DriveArcade(m_driverController::getLeftY, m_driverController::getRightX, drive));
+
+    //drive.setDefaultCommand(new DriveArcade(m_driverController::getLeftY, m_driverController::getRightX, drive));
+    drive.setDefaultCommand(new DriveTank(m_driverController::getLeftY, m_driverController::getRightY, false, drive));
   }
 
   /**
@@ -53,7 +61,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     
-    
+    m_driverController.a().onTrue(new InstantCommand(drive::configGains));
   }
 
   /**
