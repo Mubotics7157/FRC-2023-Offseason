@@ -74,6 +74,10 @@ public class Tracker extends SubsystemBase{
         estimator.resetPosition(drive.getHeading(), drive.getLeftDistance(), drive.getRightDistance(), pose);
     }
 
+    public void resetPose(){
+        setPose(new Pose2d());
+    }
+
     public Pose2d getPose(){
         return estimator.getEstimatedPosition();
     }

@@ -5,6 +5,7 @@ import javax.lang.model.element.ModuleElement.DirectiveKind;
 import org.opencv.core.RotatedRect;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -52,6 +53,8 @@ public class Drive extends SubsystemBase{
         SmartDashboard.putNumber("drive kP", 0);
         SmartDashboard.putNumber("drive kD", 0);
         SmartDashboard.putNumber("drive kF", 0);
+
+        SmartDashboard.putNumber("Drive Neutral Mode", 0);
     }
 
     public static Drive getInstance(){
@@ -69,6 +72,9 @@ public class Drive extends SubsystemBase{
     public void logData(){
         SmartDashboard.putNumber("left speed", getLeftSpeed());
         SmartDashboard.putNumber("right speed", getRightSpeed());
+
+        SmartDashboard.putNumber("left distance", getLeftDistance());
+        SmartDashboard.putNumber("right distance", getRightDistance());
 
         SmartDashboard.putNumber("gyro heading", getHeading().getDegrees());
 
@@ -95,11 +101,18 @@ public class Drive extends SubsystemBase{
         double leftSpeed = CommonConversions.metersPerSecToStepsPerDecisec(leftMPS, DriveConstants.WHEEL_DIAMETER_METERS);
         double rightSpeed = CommonConversions.metersPerSecToStepsPerDecisec(rightMPS, DriveConstants.WHEEL_DIAMETER_METERS);
 
-        SmartDashboard.putNumber("wanted left", leftSpeed);
-        SmartDashboard.putNumber("wanted right", rightSpeed);
+        SmartDashboard.putNumber("wanted left", leftMPS);
+        SmartDashboard.putNumber("wanted right", rightMPS);
 
-        leftMaster.set(ControlMode.Velocity, leftSpeed);
-        rightMaster.set(ControlMode.Velocity, rightSpeed);
+        if(leftSpeed == 0)
+            leftMaster.set(ControlMode.PercentOutput, 0);
+        else
+            leftMaster.set(ControlMode.Velocity, leftSpeed);
+        
+        if(rightSpeed == 0)
+            rightMaster.set(ControlMode.PercentOutput, 0);
+        else
+            rightMaster.set(ControlMode.Velocity, rightSpeed);
     }
 
     public double getLeftDistance(){
@@ -133,6 +146,20 @@ public class Drive extends SubsystemBase{
         return driveFactor;
     }
 
+    public void setCoast(){
+        leftMaster.setNeutralMode(NeutralMode.Coast);
+        leftSlave.setNeutralMode(NeutralMode.Coast);
+        rightMaster.setNeutralMode(NeutralMode.Coast);
+        rightSlave.setNeutralMode(NeutralMode.Coast);
+    }
+
+    public void setBrake(){
+        leftMaster.setNeutralMode(NeutralMode.Brake);
+        leftSlave.setNeutralMode(NeutralMode.Brake);
+        rightMaster.setNeutralMode(NeutralMode.Brake);
+        rightSlave.setNeutralMode(NeutralMode.Brake);
+    }
+
     public void configGains(){
         leftMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
         leftMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
@@ -154,15 +181,29 @@ public class Drive extends SubsystemBase{
         leftSlave.follow(leftMaster);
         rightSlave.follow(rightMaster);
 
-        leftMaster.setInverted(false);
+        leftMaster.setInverted(true);
         leftSlave.setInverted(InvertType.FollowMaster);
-        rightMaster.setInverted(true);
+        rightMaster.setInverted(false);
         rightSlave.setInverted(InvertType.FollowMaster);
 
         leftMaster.setNeutralMode(DriveConstants.NEUTRAL_MODE);
         leftSlave.setNeutralMode(DriveConstants.NEUTRAL_MODE);
         rightMaster.setNeutralMode(DriveConstants.NEUTRAL_MODE);
         rightSlave.setNeutralMode(DriveConstants.NEUTRAL_MODE);
+
+        leftMaster.configVoltageCompSaturation(12);
+        rightMaster.configVoltageCompSaturation(12);
+        leftMaster.enableVoltageCompensation(true);
+        rightMaster.enableVoltageCompensation(true);
+
+        leftMaster.config_kP(0, DriveConstants.driveKP);
+        rightMaster.config_kP(0, DriveConstants.driveKP);
+        
+        leftMaster.config_kD(0, 0);
+        rightMaster.config_kD(0, 0);
+        
+        leftMaster.config_kF(0, DriveConstants.driveKF);
+        rightMaster.config_kF(0, DriveConstants.driveKF);
 
         leftMaster.setSelectedSensorPosition(0);
         rightMaster.setSelectedSensorPosition(0);

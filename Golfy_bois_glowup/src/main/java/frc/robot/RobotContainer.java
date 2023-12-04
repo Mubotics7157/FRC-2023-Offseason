@@ -49,7 +49,7 @@ public class RobotContainer {
     configureBindings();
 
     //drive.setDefaultCommand(new DriveArcade(m_driverController::getLeftY, m_driverController::getRightX, drive));
-    drive.setDefaultCommand(new DriveTank(m_driverController::getLeftY, m_driverController::getRightY, false, drive));
+    drive.setDefaultCommand(new DriveTank(m_driverController::getLeftY, m_driverController::getRightY, true, drive));
   }
 
   /**
@@ -62,13 +62,16 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
-    m_driverController.a().onTrue(new InstantCommand(drive::configGains));
+    m_driverController.a().onTrue(new InstantCommand(tracker::resetPose));
+    //m_driverController.b().onTrue(new InstantCommand(drive::setBrake));
+    //m_driverController.x().onTrue(new InstantCommand(drive::setCoast));
+    //m_driverController.a().onTrue(new InstantCommand(drive::configGains));
   }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
+   * 
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {

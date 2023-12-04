@@ -30,10 +30,13 @@ public final class Constants {
 
   public static class DriveConstants{
 
-    public static final double driveKS = 0.12256;
-    public static final double driveKV = 2.3396;
-    public static final double driveKA = 0.19701;
-    public static final double driveKP = 0.0018763;
+    public static final double driveKS = 0.12711;
+    public static final double driveKV = 1.7819;
+    public static final double driveKA = 0.17246;
+
+    public static final double driveKP = 0.003;
+    public static final double driveKF = 0.0468;
+
 
     public static final int DEVICE_ID_LEFT_MASTER = 13;
     public static final int DEVICE_ID_LEFT_SLAVE = 12;
@@ -46,8 +49,8 @@ public final class Constants {
 
     public static final String DRIVE_CANIVORE_ID = "drive";
 
-    public static final double MAX_TANGENTIAL_VELOCITY = 4.3;
-    public static final double MAX_TELE_TANGENTIAL_VELOCITY = 4.3;
+    public static final double MAX_TANGENTIAL_VELOCITY = 7;
+    public static final double MAX_TELE_TANGENTIAL_VELOCITY = 7;
 
     public static final double MAX_TELE_ANGULAR_VELOCITY = Math.PI;
 
