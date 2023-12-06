@@ -30,11 +30,12 @@ public final class Constants {
 
   public static class DriveConstants{
 
-    public static final double driveKS = 0.12711;
-    public static final double driveKV = 1.7819;
-    public static final double driveKA = 0.17246;
+    public static final double driveKS = 0.14721;//0.093307;//0.12711;
+    public static final double driveKV = 1.7561;//0.87933;//1.7819;
+    public static final double driveKA = 0.1356;//0.069662;//0.17246;
+    //public static final double driveKP = 0.034004;
 
-    public static final double driveKP = 0.003;
+    public static final double driveKP = 0.019307;//0.0050532;//0.003;
     public static final double driveKF = 0.0468;
 
 
@@ -52,7 +53,7 @@ public final class Constants {
     public static final double MAX_TANGENTIAL_VELOCITY = 7;
     public static final double MAX_TELE_TANGENTIAL_VELOCITY = 7;
 
-    public static final double MAX_TELE_ANGULAR_VELOCITY = Math.PI;
+    public static final double MAX_TELE_ANGULAR_VELOCITY = 2 * Math.PI;
 
     public static final double WHEELBASE_LENGTH = Units.inchesToMeters(29);
     public static final double WHEELBASE_WIDTH = Units.inchesToMeters(29);
@@ -104,6 +105,21 @@ public final class Constants {
 
     public static final double SHOOTER_KF = 0.00012;
     
+  }
+
+  public static class SpindexerConstants{
+    public static final int DEVICE_ID_SPINDEXER = 6;
+    public static final int DEVICE_ID_THROAT = 7;
+
+    public static final double SPINDEXER_GEARING = 15;
+
+    public static final double SPINDEXER_KP = 0;
+    public static final double SPINDEXER_KD = 0;
+    public static final double SPINDEXER_KF = 0;
+
+
+    public static final double MAX_ACCELERATION_RPM = 1000;
+    public static final double MAX_VELOCITY_RPM = 3000;
   }
 
   public static class VisionConstants{

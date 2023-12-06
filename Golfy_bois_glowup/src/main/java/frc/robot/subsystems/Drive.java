@@ -44,13 +44,14 @@ public class Drive extends SubsystemBase{
     private WPI_Pigeon2 gyro = new WPI_Pigeon2(DriveConstants.DEVICE_ID_PIGEON);
 
     private double driveFactor = DriveConstants.MAX_TELE_TANGENTIAL_VELOCITY;
+    private double turnFactor = DriveConstants.MAX_TELE_ANGULAR_VELOCITY;
 
     public Drive(){
         gyro.reset();
 
         configMotors();
 
-        SmartDashboard.putNumber("drive kP", 0);
+        SmartDashboard.putNumber("drive kP", DriveConstants.driveKP);
         SmartDashboard.putNumber("drive kD", 0);
         SmartDashboard.putNumber("drive kF", 0);
 
@@ -104,15 +105,20 @@ public class Drive extends SubsystemBase{
         SmartDashboard.putNumber("wanted left", leftMPS);
         SmartDashboard.putNumber("wanted right", rightMPS);
 
+        SmartDashboard.putNumber("left error", Math.abs(leftMPS - getLeftSpeed()));
+        SmartDashboard.putNumber("right error", Math.abs(rightMPS - getRightSpeed()));
+
         if(leftSpeed == 0)
             leftMaster.set(ControlMode.PercentOutput, 0);
         else
-            leftMaster.set(ControlMode.Velocity, leftSpeed);
+            leftMaster.set(ControlMode.Velocity, leftSpeed, 
+                DemandType.ArbitraryFeedForward, DriveConstants.DRIVE_FEEDFORWARD.calculate(leftMPS) / 12);
         
         if(rightSpeed == 0)
             rightMaster.set(ControlMode.PercentOutput, 0);
         else
-            rightMaster.set(ControlMode.Velocity, rightSpeed);
+            rightMaster.set(ControlMode.Velocity, rightSpeed,
+                DemandType.ArbitraryFeedForward, DriveConstants.DRIVE_FEEDFORWARD.calculate(rightMPS) / 12);
     }
 
     public double getLeftDistance(){
@@ -120,7 +126,7 @@ public class Drive extends SubsystemBase{
     }
 
     public double getRightDistance(){
-        return CommonConversions.stepsToMeters(leftSlave.getSelectedSensorPosition());
+        return CommonConversions.stepsToMeters(rightMaster.getSelectedSensorPosition());
     }
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds(){
@@ -146,6 +152,19 @@ public class Drive extends SubsystemBase{
         return driveFactor;
     }
 
+    public void setTurnFactor(double newFactor){
+        turnFactor = newFactor;
+    }
+
+    public double getTurnFactor(){
+        return turnFactor;
+    }
+
+    public void resetEncoders(){
+        leftMaster.setSelectedSensorPosition(0);
+        rightMaster.setSelectedSensorPosition(0);
+    }
+
     public void setCoast(){
         leftMaster.setNeutralMode(NeutralMode.Coast);
         leftSlave.setNeutralMode(NeutralMode.Coast);
@@ -162,12 +181,12 @@ public class Drive extends SubsystemBase{
 
     public void configGains(){
         leftMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
-        leftMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
-        leftMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
+        //leftMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
+        //leftMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
 
-        rightMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
-        rightMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
-        rightMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
+        //rightMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
+        //rightMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
+        //rightMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
 
     }
 
@@ -202,8 +221,8 @@ public class Drive extends SubsystemBase{
         leftMaster.config_kD(0, 0);
         rightMaster.config_kD(0, 0);
         
-        leftMaster.config_kF(0, DriveConstants.driveKF);
-        rightMaster.config_kF(0, DriveConstants.driveKF);
+        //leftMaster.config_kF(0, DriveConstants.driveKF);
+        //rightMaster.config_kF(0, DriveConstants.driveKF);
 
         leftMaster.setSelectedSensorPosition(0);
         rightMaster.setSelectedSensorPosition(0);

@@ -6,6 +6,7 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.autos.TestAuto;
+import frc.robot.commands.drive.ChangeFactors;
 import frc.robot.commands.drive.DriveArcade;
 import frc.robot.commands.drive.DriveTank;
 import frc.robot.subsystems.Drive;
@@ -48,8 +49,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    //drive.setDefaultCommand(new DriveArcade(m_driverController::getLeftY, m_driverController::getRightX, drive));
-    drive.setDefaultCommand(new DriveTank(m_driverController::getLeftY, m_driverController::getRightY, true, drive));
+    drive.setDefaultCommand(new DriveArcade(m_driverController::getLeftY, m_driverController::getRightX, true, drive));
+    //drive.setDefaultCommand(new DriveTank(m_driverController::getLeftY, m_driverController::getRightY, true, drive));
   }
 
   /**
@@ -65,7 +66,10 @@ public class RobotContainer {
     m_driverController.a().onTrue(new InstantCommand(tracker::resetPose));
     //m_driverController.b().onTrue(new InstantCommand(drive::setBrake));
     //m_driverController.x().onTrue(new InstantCommand(drive::setCoast));
-    //m_driverController.a().onTrue(new InstantCommand(drive::configGains));
+    m_driverController.a().onTrue(new InstantCommand(drive::configGains));
+
+    m_driverController.leftTrigger().whileTrue(new ChangeFactors(2, Math.PI, drive));
+    m_driverController.b().onTrue(new InstantCommand(drive::resetEncoders));
   }
 
   /**
