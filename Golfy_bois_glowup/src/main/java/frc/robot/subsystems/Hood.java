@@ -4,6 +4,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.InterpolatingTreeMap;
@@ -26,7 +30,7 @@ public class Hood extends SubsystemBase{
     
     private static Hood instance = new Hood();
 
-    WPI_TalonFX hoodMotor = new WPI_TalonFX(HoodConstants.DEVICE_ID_HOOD);
+    private CANSparkMax hoodMotor = new CANSparkMax(HoodConstants.DEVICE_ID_HOOD, MotorType.kBrushless);
     private Rotation2d currentSetpoint = new Rotation2d();
     public double jogVal = 0;
     private HoodState hoodState = HoodState.SETPOINT;
@@ -37,22 +41,16 @@ public class Hood extends SubsystemBase{
     
     public Hood(){
 
-        hoodMotor.configFactoryDefault();
+        hoodMotor.restoreFactoryDefaults();
 
         hoodMotor.setInverted(false);
-        hoodMotor.setNeutralMode(NeutralMode.Brake);
-        hoodMotor.setSelectedSensorPosition(0);
+        hoodMotor.setIdleMode(IdleMode.kBrake);
+        hoodMotor.getEncoder().setPosition(0);
 
-        hoodMotor.configPeakOutputForward(1);
-        hoodMotor.configPeakOutputReverse(-1);
-
-        hoodMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(false, 35, 35, 0.1));
-        hoodMotor.configVoltageCompSaturation(12);
-        hoodMotor.enableVoltageCompensation(false);
+        hoodMotor.setSmartCurrentLimit(20, 35);
+        hoodMotor.enableVoltageCompensation(12);
         
-        hoodMotor.config_kP(0, HoodConstants.HOOD_KP);
-
-
+        hoodMotor.getPIDController().setP(HoodConstants.HOOD_KP);
     }
 
     public static Hood getInstance(){
@@ -68,11 +66,11 @@ public class Hood extends SubsystemBase{
         
         switch(hoodState){
             case OFF:
-                hoodMotor.set(ControlMode.PercentOutput, 0);
+                set(0);
                 break;
 
             case JOG:
-                hoodMotor.set(ControlMode.PercentOutput, jogVal);
+                set(jogVal);
                 break;
 
             case SETPOINT:
@@ -91,21 +89,19 @@ public class Hood extends SubsystemBase{
     }
 
     public void goToSetpoint(){
-        hoodMotor.set(ControlMode.Position, CommonConversions.radiansToSteps(currentSetpoint.getDegrees(), HoodConstants.HOOD_GEARING));
+        hoodMotor.getPIDController().setReference(currentSetpoint.getRotations() * HoodConstants.HOOD_GEARING, ControlType.kPosition);
     }
 
-    /*
-    public void setAngle(Rotation2d angle){
-        hoodMotor.set(ControlMode.Position, CommonConversions.radiansToSteps(angle.getDegrees(), HoodConstants.HOOD_GEARING));
+    public void set(double value){
+        hoodMotor.set(value);
     }
-    */
 
     public void setSetpoint(Rotation2d wantedSetpoint){
         currentSetpoint = wantedSetpoint;
     }
 
     public Rotation2d getAngle(){
-        return Rotation2d.fromRadians(CommonConversions.stepsToRadians(hoodMotor.getSelectedSensorPosition(), HoodConstants.HOOD_GEARING));
+        return Rotation2d.fromRotations(hoodMotor.getEncoder().getPosition() * HoodConstants.HOOD_GEARING);
     }
 
     public boolean atSetpoint(){
@@ -120,11 +116,11 @@ public class Hood extends SubsystemBase{
     public void zeroRoutine(){
 
         if(!limSwitch.get()) //if switch is not hit
-            hoodMotor.set(ControlMode.PercentOutput, 0.1);
+            set(0);
 
         else{ //if the switch is hit
-            hoodMotor.set(ControlMode.PercentOutput, 0);
-            hoodMotor.setSelectedSensorPosition(0);
+            set(0);
+            hoodMotor.getEncoder().setPosition(0);
         }
     }
 

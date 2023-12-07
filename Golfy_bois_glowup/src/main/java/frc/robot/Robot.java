@@ -11,8 +11,11 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -28,6 +31,8 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+  private final SendableChooser<NeutralMode> neutralModeChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -56,6 +61,10 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    neutralModeChooser.setDefaultOption("Brake", NeutralMode.Brake);
+    neutralModeChooser.addOption("Coast", NeutralMode.Coast);
+
   }
 
   /**
@@ -82,10 +91,9 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    if(SmartDashboard.getNumber("Drive Neutral Mode", 0) == 0)
-      Drive.getInstance().setCoast();
-    else if(SmartDashboard.getNumber("Drive Neutral Mode", 0) == 1)
-      Drive.getInstance().setBrake();
+    Drive.getInstance().setNeutralMode(
+      neutralModeChooser.getSelected()
+    );
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

@@ -22,6 +22,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -52,10 +53,8 @@ public class Drive extends SubsystemBase{
         configMotors();
 
         SmartDashboard.putNumber("drive kP", DriveConstants.driveKP);
-        SmartDashboard.putNumber("drive kD", 0);
-        SmartDashboard.putNumber("drive kF", 0);
-
-        SmartDashboard.putNumber("Drive Neutral Mode", 0);
+        //SmartDashboard.putNumber("drive kD", 0);
+        //SmartDashboard.putNumber("drive kF", 0);
     }
 
     public static Drive getInstance(){
@@ -166,17 +165,18 @@ public class Drive extends SubsystemBase{
     }
 
     public void setCoast(){
-        leftMaster.setNeutralMode(NeutralMode.Coast);
-        leftSlave.setNeutralMode(NeutralMode.Coast);
-        rightMaster.setNeutralMode(NeutralMode.Coast);
-        rightSlave.setNeutralMode(NeutralMode.Coast);
+        setNeutralMode(NeutralMode.Coast);
     }
 
     public void setBrake(){
-        leftMaster.setNeutralMode(NeutralMode.Brake);
-        leftSlave.setNeutralMode(NeutralMode.Brake);
-        rightMaster.setNeutralMode(NeutralMode.Brake);
-        rightSlave.setNeutralMode(NeutralMode.Brake);
+        setNeutralMode(NeutralMode.Brake);
+    }
+
+    public void setNeutralMode(NeutralMode mode){
+        leftMaster.setNeutralMode(mode);
+        leftSlave.setNeutralMode(mode);
+        rightMaster.setNeutralMode(mode);
+        rightSlave.setNeutralMode(mode);
     }
 
     public void configGains(){
@@ -184,7 +184,7 @@ public class Drive extends SubsystemBase{
         //leftMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
         //leftMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
 
-        //rightMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
+        rightMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
         //rightMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
         //rightMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
 
