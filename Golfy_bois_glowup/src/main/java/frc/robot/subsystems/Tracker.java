@@ -56,10 +56,7 @@ public class Tracker extends SubsystemBase{
 
 
     public static Tracker getInstance(){
-        if(instance == null)
-            return new Tracker();
-        else
-            return instance;
+        return instance;
     }
 
     public void logData(){

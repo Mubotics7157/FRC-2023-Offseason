@@ -58,10 +58,7 @@ public class Drive extends SubsystemBase{
     }
 
     public static Drive getInstance(){
-        if(instance == null)
-            return new Drive();
-        else
-            return instance;
+        return instance;
     }
 
     @Override

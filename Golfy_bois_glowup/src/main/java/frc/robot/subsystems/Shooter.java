@@ -54,10 +54,7 @@ public class Shooter extends SubsystemBase{
     }
 
     public static Shooter getInstance(){
-        if(instance != null)
             return instance;
-        else
-            return new Shooter();
     }
 
     @Override

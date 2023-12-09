@@ -54,11 +54,7 @@ public class Hood extends SubsystemBase{
     }
 
     public static Hood getInstance(){
-        if(instance != null)
-            return instance;
-        
-        else
-            return new Hood();
+        return instance;
     }
 
     @Override

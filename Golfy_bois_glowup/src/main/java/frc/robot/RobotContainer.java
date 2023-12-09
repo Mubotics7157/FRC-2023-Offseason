@@ -49,8 +49,8 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
 
-    //drive.setDefaultCommand(new DriveArcade(m_driverController::getLeftY, m_driverController::getRightX, true, drive));
-    drive.setDefaultCommand(new DriveTank(m_driverController::getLeftY, m_driverController::getRightY, true, drive));
+    drive.setDefaultCommand(new DriveArcade(m_driverController::getLeftY, m_driverController::getRightX, true, drive));
+    //drive.setDefaultCommand(new DriveTank(m_driverController::getLeftY, m_driverController::getRightY, true, drive));
   }
 
   /**

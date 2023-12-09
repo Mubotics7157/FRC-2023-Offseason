@@ -64,10 +64,7 @@ public class Turret extends SubsystemBase{
     }
 
     public static Turret getInstance(){
-        if(instance != null)
-            return instance;
-        else   
-            return new Turret();
+        return instance;
     }
 
     @Override

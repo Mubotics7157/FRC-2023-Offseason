@@ -19,10 +19,7 @@ public class VisionManager extends SubsystemBase{
     }
 
     public static VisionManager getInstance(){
-        if(instance != null)
-            return instance;
-        else
-            return new VisionManager();
+        return instance;
     }
 
     @Override

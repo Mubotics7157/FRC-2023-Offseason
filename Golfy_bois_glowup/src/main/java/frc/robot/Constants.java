@@ -109,7 +109,6 @@ public final class Constants {
 
   public static class SpindexerConstants{
     public static final int DEVICE_ID_SPINDEXER = 6;
-    public static final int DEVICE_ID_THROAT = 7;
 
     public static final double SPINDEXER_GEARING = 15;
 
@@ -117,9 +116,18 @@ public final class Constants {
     public static final double SPINDEXER_KD = 0;
     public static final double SPINDEXER_KF = 0;
 
+    public static final double MAX_ACCELERATION = 5000;
+    public static final double MAX_VELOCITY = 5000;
 
-    public static final double MAX_ACCELERATION_RPM = 1000;
-    public static final double MAX_VELOCITY_RPM = 3000;
+    public static final double IDLE_SPEED = 1000;
+    public static final double INTAKING_SPEED = 3000;
+    public static final double SHOOTING_SPEED = 2000;
+  }
+
+  public static class ThroatConstants{
+    public static final int DEVICE_ID_THROAT = 7;
+    public static final double THROAT_SHOOTING_SPEED = 0.5;
+    public static final double THROAT_UNCLOG_SPEED = -0.2;
   }
 
   public static class VisionConstants{

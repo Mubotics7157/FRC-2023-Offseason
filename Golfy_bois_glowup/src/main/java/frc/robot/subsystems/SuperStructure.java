@@ -33,10 +33,7 @@ public class SuperStructure extends SubsystemBase{
 
 
     public static SuperStructure getInstance(){
-        if(instance != null)
-            return instance;
-        else
-            return new SuperStructure();
+        return instance;
     }
 
     @Override
