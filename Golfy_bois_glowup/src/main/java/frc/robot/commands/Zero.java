@@ -1,16 +1,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.SuperStructure;
-import frc.robot.subsystems.SuperStructure.SuperStructureState;
+import frc.robot.subsystems.Shooting.ShooterManager;
+import frc.robot.subsystems.Shooting.ShooterManager.SuperStructureState;
 
 public class Zero extends CommandBase{
 
-    SuperStructure superStructure;
+    ShooterManager superStructure;
 
     SuperStructureState previousState;
     
-    public Zero(SuperStructure superStructure){
+    public Zero(ShooterManager superStructure){
         this.superStructure = superStructure;
 
         addRequirements(superStructure);

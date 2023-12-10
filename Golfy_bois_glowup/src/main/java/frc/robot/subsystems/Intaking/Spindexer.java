@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.Intaking;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -27,8 +27,6 @@ public class Spindexer extends SubsystemBase{
     private WPI_TalonFX spindexerMotor = new WPI_TalonFX(SpindexerConstants.DEVICE_ID_SPINDEXER);
 
     private SpindexerState spindexerState = SpindexerState.OFF;
-
-    private double throatSetpoint = 0;
 
     public Spindexer(){
         configMotors();

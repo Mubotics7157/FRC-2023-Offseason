@@ -5,16 +5,18 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.SetState;
 import frc.robot.commands.autos.TestAuto;
 import frc.robot.commands.drive.ChangeFactors;
 import frc.robot.commands.drive.DriveArcade;
 import frc.robot.commands.drive.DriveTank;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.PathHandler;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.SuperStructure;
 import frc.robot.subsystems.Tracker;
+import frc.robot.subsystems.Shooting.Hood;
+import frc.robot.subsystems.Shooting.Shooter;
+import frc.robot.subsystems.Shooting.ShooterManager;
+import frc.robot.subsystems.Shooting.Hood.HoodState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
@@ -33,11 +35,10 @@ public class RobotContainer {
   private final Drive drive = Drive.getInstance();
   private final Tracker tracker = Tracker.getInstance();
   private final PathHandler handler = PathHandler.getInstance();
-  //private final SuperStructure superStructure = SuperStructure.getInstance();
+  //private final ShooterManager shooterManager = ShooterManager.getInstance();
   //private final Hood hood = Hood.getInstance();
   //private final Shooter shooter = Shooter.getInstance();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
       new CommandXboxController(OperatorConstants.DEVICE_ID_DRIVER_CONTROLLER);
 
@@ -68,6 +69,8 @@ public class RobotContainer {
 
     m_driverController.leftTrigger().whileTrue(new ChangeFactors(2, Math.PI, drive));
     m_driverController.b().onTrue(new InstantCommand(drive::resetEncoders));
+
+    //m_driverController.a().onTrue(new SetState<HoodState>(hood::setState, HoodState.DYNAMIC));
   }
 
   /**

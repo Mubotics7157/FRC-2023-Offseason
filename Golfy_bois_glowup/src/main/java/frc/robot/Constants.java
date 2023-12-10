@@ -124,10 +124,31 @@ public final class Constants {
     public static final double SHOOTING_SPEED = 2000;
   }
 
+  public static class IntakeConstants{
+    public static final int DEVICE_ID_INTAKE = 7;
+    public static final int DEVICE_ID_ACTUATOR = 8;
+
+    public static final double ACTUATOR_GEAR_RATIO = 8;
+
+    public static final double ACTUATOR_STOW = 0;
+    public static final double ACTUATOR_DOWN = 2000;
+
+    public static final double ACTUATOR_KP = 0.002;
+    public static final double ACTUATOR_KD = 0.002;
+
+    public static final double INTAKE_SPEED = 0.75;
+    public static final double OUTTAKE_SPEED = -0.75;
+  }
+
   public static class ThroatConstants{
     public static final int DEVICE_ID_THROAT = 7;
     public static final double THROAT_SHOOTING_SPEED = 0.5;
     public static final double THROAT_UNCLOG_SPEED = -0.2;
+  }
+
+  public static class Setpoints{
+    public static final Rotation2d HOOD_STOW = Rotation2d.fromDegrees(0);
+    public static final Rotation2d TURRET_STOW = Rotation2d.fromDegrees(90);
   }
 
   public static class VisionConstants{

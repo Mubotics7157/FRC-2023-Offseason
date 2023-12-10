@@ -1,13 +1,14 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.Shooting;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.Hood.HoodState;
-import frc.robot.subsystems.Shooter.ShooterState;
-import frc.robot.subsystems.Turret.TurretState;
+import frc.robot.Constants.Setpoints;
+import frc.robot.subsystems.Shooting.Hood.HoodState;
+import frc.robot.subsystems.Shooting.Shooter.ShooterState;
+import frc.robot.subsystems.Shooting.Turret.TurretState;
 
-public class SuperStructure extends SubsystemBase{
+public class ShooterManager extends SubsystemBase{
     
     public enum SuperStructureState{
         AUTO,
@@ -16,7 +17,7 @@ public class SuperStructure extends SubsystemBase{
         ZERO
     }
 
-    private static SuperStructure instance = new SuperStructure();
+    private static ShooterManager instance = new ShooterManager();
 
     private final Turret turret = Turret.getInstance();
     private final Hood hood = Hood.getInstance();
@@ -24,7 +25,7 @@ public class SuperStructure extends SubsystemBase{
 
     private SuperStructureState currentState = SuperStructureState.AUTO;
 
-    public SuperStructure(){
+    public ShooterManager(){
 
         SmartDashboard.putNumber("Custom hood", 0); //degrees
         SmartDashboard.putNumber("Custom shooter", 0); //degrees
@@ -32,29 +33,14 @@ public class SuperStructure extends SubsystemBase{
     }
 
 
-    public static SuperStructure getInstance(){
+    public static ShooterManager getInstance(){
         return instance;
     }
 
     @Override
     public void periodic() {
-        /* 
-        switch(state){
-            case AUTO:
-                setAll(null, null, null);
-                break;
-            case CUSTOM:
-                setAll(
-                    Rotation2d.fromDegrees(SmartDashboard.getNumber("Custom turret", 0)),
-                    Rotation2d.fromDegrees(SmartDashboard.getNumber("Custom hood", 0)),
-                    SmartDashboard.getNumber("Custom shooter", 0));
-                break;
-        }
-
-        */
-
+    
     }
-
 
 
     public void setState(SuperStructureState wantedState){
@@ -62,7 +48,7 @@ public class SuperStructure extends SubsystemBase{
 
         switch(currentState){
             case STOW:
-                setAll(null, null, null);
+                setAll(Setpoints.TURRET_STOW, Setpoints.HOOD_STOW, 0);
             break; 
             
             case AUTO:
@@ -94,7 +80,6 @@ public class SuperStructure extends SubsystemBase{
     public boolean readyToShoot(){
         return shooter.atSpeed() && hood.atSetpoint() && turret.atSetpoint();
     }
-    
 
     public boolean isZeroed(){
         return turret.isZeroed() && hood.isZeroed();
@@ -119,7 +104,7 @@ public class SuperStructure extends SubsystemBase{
         );
     }
 
-    public void setAll(Rotation2d turretAng, Rotation2d hoodAng, Double shooterSpeed){
+    public void setAll(Rotation2d turretAng, Rotation2d hoodAng, double shooterSpeed){
         if(turret.getState() != TurretState.SETPOINT)
             turret.setState(TurretState.SETPOINT);
 
