@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.util.CommonConversions;
+import frc.robot.util.LiveNumber;
 import frc.robot.util.Mutil;
 
 public class Drive extends SubsystemBase{
@@ -47,14 +48,14 @@ public class Drive extends SubsystemBase{
     private double driveFactor = DriveConstants.MAX_TELE_TANGENTIAL_VELOCITY;
     private double turnFactor = DriveConstants.MAX_TELE_ANGULAR_VELOCITY;
 
+    private LiveNumber driveP = new LiveNumber("drive kP", DriveConstants.driveKP);
+
     public Drive(){
         gyro.reset();
 
         configMotors();
 
         SmartDashboard.putNumber("drive kP", DriveConstants.driveKP);
-        //SmartDashboard.putNumber("drive kD", 0);
-        //SmartDashboard.putNumber("drive kF", 0);
     }
 
     public static Drive getInstance(){

@@ -10,7 +10,7 @@ import frc.robot.subsystems.Shooting.Turret.TurretState;
 
 public class ShooterManager extends SubsystemBase{
     
-    public enum SuperStructureState{
+    public enum ShooterManagerState{
         AUTO,
         CUSTOM,
         STOW,
@@ -23,7 +23,7 @@ public class ShooterManager extends SubsystemBase{
     private final Hood hood = Hood.getInstance();
     private final Shooter shooter = Shooter.getInstance();
 
-    private SuperStructureState currentState = SuperStructureState.AUTO;
+    private ShooterManagerState currentState = ShooterManagerState.AUTO;
 
     public ShooterManager(){
 
@@ -43,7 +43,7 @@ public class ShooterManager extends SubsystemBase{
     }
 
 
-    public void setState(SuperStructureState wantedState){
+    public void setState(ShooterManagerState wantedState){
         currentState = wantedState;
 
         switch(currentState){
@@ -68,7 +68,7 @@ public class ShooterManager extends SubsystemBase{
         }
     }
 
-    public SuperStructureState getState(){
+    public ShooterManagerState getState(){
         return currentState;
     }
 

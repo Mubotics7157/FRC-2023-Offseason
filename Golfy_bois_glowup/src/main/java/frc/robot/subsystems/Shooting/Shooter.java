@@ -5,6 +5,12 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,7 +32,8 @@ public class Shooter extends SubsystemBase{
 
     private ShooterState state = ShooterState.SETPOINT;
 
-    WPI_TalonFX shooterMotor = new WPI_TalonFX(ShooterConstants.DEVICE_ID_SHOOTER);
+    private CANSparkMax shooterMaster = new CANSparkMax(ShooterConstants.DEVICE_ID_SHOOTER_MASTER, MotorType.kBrushless);
+    private CANSparkMax shooterSlave = new CANSparkMax(ShooterConstants.DEVICE_ID_SHOOT_SLAVE, MotorType.kBrushless);
 
     private double currentSetpoint = 0;
 
@@ -35,23 +42,10 @@ public class Shooter extends SubsystemBase{
     ShotGenerator shotGen = ShotGenerator.getInstance();
 
     public Shooter(){
-
-        shooterMotor.configFactoryDefault();
-    
-        shooterMotor.setInverted(false);
-        shooterMotor.setNeutralMode(NeutralMode.Brake);
-
-        shooterMotor.config_kP(0, ShooterConstants.SHOOTER_KP);
-        shooterMotor.config_kF(0, ShooterConstants.SHOOTER_KF);
-
-        shooterMotor.configPeakOutputForward(1);
-        shooterMotor.configPeakOutputReverse(-1);
-
-        shooterMotor.configGetStatorCurrentLimit(new StatorCurrentLimitConfiguration(false, 35, 35, 0.1));
-
-        shooterMotor.configVoltageCompSaturation(12);
-        shooterMotor.enableVoltageCompensation(false);
-
+        configMotors();
+        
+        SmartDashboard.putNumber("Shooter kP", ShooterConstants.SHOOTER_KP);
+        SmartDashboard.putNumber("Shooter kF", ShooterConstants.SHOOTER_KF);
     }
 
     public static Shooter getInstance(){
@@ -83,7 +77,7 @@ public class Shooter extends SubsystemBase{
     }
 
     public void goToSetpoint(){
-        shooterMotor.set(ControlMode.Velocity, CommonConversions.RPMToStepsPerDecisec(currentSetpoint, ShooterConstants.SHOOTER_GEARING));
+        shooterMaster.getPIDController().setReference(currentSetpoint * ShooterConstants.SHOOTER_GEARING, ControlType.kVelocity);
     }
     
     public void trackTarget(){
@@ -97,7 +91,7 @@ public class Shooter extends SubsystemBase{
     }
 
     public void jog(double value){
-        shooterMotor.set(ControlMode.PercentOutput, value);
+        shooterMaster.set(value);
     }
 
     public void setSetpoint(double wantedSetpoint){
@@ -113,6 +107,37 @@ public class Shooter extends SubsystemBase{
     }
 
     public double getRPM(){
-        return CommonConversions.stepsPerDecisecToRPM(shooterMotor.getSelectedSensorVelocity(), ShooterConstants.SHOOTER_GEARING);
+        return shooterMaster.getEncoder().getVelocity() / ShooterConstants.SHOOTER_GEARING;
+    }
+
+    public void configGains(double kP, double kF){
+        shooterMaster.getPIDController().setP(kP);
+        shooterMaster.getPIDController().setFF(kF);
+    }
+
+    public void configGains(){
+        configGains(
+            SmartDashboard.getNumber("Shooter kP", ShooterConstants.SHOOTER_KP),
+            SmartDashboard.getNumber("Shooter kF", ShooterConstants.SHOOTER_KF));
+    }
+
+    public void configMotors(){
+        shooterMaster.restoreFactoryDefaults();
+        shooterSlave.restoreFactoryDefaults();
+    
+        shooterMaster.setInverted(false);
+        shooterSlave.setInverted(true);
+
+        shooterMaster.setIdleMode(IdleMode.kCoast);
+        shooterSlave.setIdleMode(IdleMode.kCoast);
+
+        shooterSlave.follow(shooterMaster);
+
+        shooterMaster.setSmartCurrentLimit(35);
+        shooterMaster.enableVoltageCompensation(12);
+
+        SparkMaxPIDController controller = shooterMaster.getPIDController();
+        controller.setP(ShooterConstants.SHOOTER_KP);
+        controller.setP(ShooterConstants.SHOOTER_KF);
     }
 }

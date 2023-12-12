@@ -2,33 +2,33 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooting.ShooterManager;
-import frc.robot.subsystems.Shooting.ShooterManager.SuperStructureState;
+import frc.robot.subsystems.Shooting.ShooterManager.ShooterManagerState;
 
 public class Zero extends CommandBase{
 
-    ShooterManager superStructure;
+    ShooterManager shooterManager;
 
-    SuperStructureState previousState;
+    ShooterManagerState previousState;
     
-    public Zero(ShooterManager superStructure){
-        this.superStructure = superStructure;
+    public Zero(ShooterManager shooterManager){
+        this.shooterManager = shooterManager;
 
-        addRequirements(superStructure);
+        addRequirements(shooterManager);
     }
     
     @Override
     public void initialize() {
-        superStructure.setState(SuperStructureState.ZERO);
-        previousState = superStructure.getState();
+        shooterManager.setState(ShooterManagerState.ZERO);
+        previousState = shooterManager.getState();
     }
 
     @Override
     public boolean isFinished() {
-        return superStructure.isZeroed();
+        return shooterManager.isZeroed();
     }
 
     @Override
     public void end(boolean interrupted) {
-        superStructure.setState(previousState);
+        shooterManager.setState(previousState);
     }
 }

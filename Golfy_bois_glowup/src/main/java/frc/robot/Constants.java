@@ -97,7 +97,8 @@ public final class Constants {
 
   public static class ShooterConstants{
     
-    public static final int DEVICE_ID_SHOOTER = 7;
+    public static final int DEVICE_ID_SHOOTER_MASTER = 7;
+    public static final int DEVICE_ID_SHOOT_SLAVE = 8;
 
     public static final double SHOOTER_GEARING = 5;
 
