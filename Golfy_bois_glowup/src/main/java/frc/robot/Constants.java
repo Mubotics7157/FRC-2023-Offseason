@@ -117,8 +117,7 @@ public final class Constants {
     public static final double SPINDEXER_KD = 0;
     public static final double SPINDEXER_KF = 0;
 
-    public static final double MAX_ACCELERATION = 5000;
-    public static final double MAX_VELOCITY = 5000;
+    public static final double SPINDEXER_RAMP_RATE = 4;
 
     public static final double IDLE_SPEED = 1000;
     public static final double INTAKING_SPEED = 3000;

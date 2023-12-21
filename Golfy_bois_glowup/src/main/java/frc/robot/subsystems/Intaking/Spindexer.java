@@ -12,11 +12,13 @@ import com.revrobotics.SparkMaxPIDController.AccelStrategy;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SpindexerConstants;
 import frc.robot.util.CommonConversions;
+import frc.robot.util.LiveNumber;
 
 public class Spindexer extends SubsystemBase{
 
     public enum SpindexerState{
         OFF,
+        JOG,
         IDLE,
         INTAKING,
         SHOOTING
@@ -27,6 +29,12 @@ public class Spindexer extends SubsystemBase{
     private WPI_TalonFX spindexerMotor = new WPI_TalonFX(SpindexerConstants.DEVICE_ID_SPINDEXER);
 
     private SpindexerState spindexerState = SpindexerState.OFF;
+
+    private LiveNumber spindexerP = new LiveNumber("spindexer P", SpindexerConstants.SPINDEXER_KP);
+    private LiveNumber spindexerD = new LiveNumber("spindexer D", SpindexerConstants.SPINDEXER_KD);
+    private LiveNumber spindexerF = new LiveNumber("spindexer F", SpindexerConstants.SPINDEXER_KF);
+
+    private LiveNumber rampRate = new LiveNumber("spindexer Ramp Rate", SpindexerConstants.SPINDEXER_RAMP_RATE);
 
     public Spindexer(){
         configMotors();
@@ -63,7 +71,7 @@ public class Spindexer extends SubsystemBase{
     }
 
     public void spin(double value){
-        spindexerMotor.set(ControlMode.MotionMagic, value);
+        spindexerMotor.set(ControlMode.Velocity, value);
     }
 
     public void setState(SpindexerState newState){
@@ -75,6 +83,14 @@ public class Spindexer extends SubsystemBase{
         return spindexerState;
     }
 
+    public void configGains(){
+        spindexerMotor.config_kP(0, spindexerP.get());
+        spindexerMotor.config_kD(0, spindexerD.get());
+        spindexerMotor.config_kF(0, spindexerF.get());
+
+        spindexerMotor.configClosedloopRamp(rampRate.get());
+    }
+
     public void configMotors(){
         spindexerMotor.configFactoryDefault();
 
@@ -82,8 +98,7 @@ public class Spindexer extends SubsystemBase{
 
         spindexerMotor.setNeutralMode(NeutralMode.Coast);
 
-        spindexerMotor.configMotionAcceleration(SpindexerConstants.MAX_ACCELERATION * SpindexerConstants.SPINDEXER_GEARING);
-        spindexerMotor.configMotionCruiseVelocity(SpindexerConstants.MAX_VELOCITY * SpindexerConstants.SPINDEXER_GEARING);
+        spindexerMotor.configClosedloopRamp(SpindexerConstants.SPINDEXER_RAMP_RATE);
 
         spindexerMotor.config_kP(0, SpindexerConstants.SPINDEXER_KP);
         spindexerMotor.config_kD(0, SpindexerConstants.SPINDEXER_KD);

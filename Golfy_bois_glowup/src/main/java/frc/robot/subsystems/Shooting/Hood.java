@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.subsystems.VisionManager;
 import frc.robot.util.CommonConversions;
+import frc.robot.util.LiveNumber;
 import frc.robot.util.Shooting.ShotGenerator;
 
 public class Hood extends SubsystemBase{
@@ -38,20 +39,13 @@ public class Hood extends SubsystemBase{
 
     DigitalInput limSwitch = new DigitalInput(HoodConstants.DEVICE_ID_LIMIT_SWITCH);
 
+    private LiveNumber hoodP = new LiveNumber("hood P", HoodConstants.HOOD_KP);
+
     ShotGenerator shotGen = ShotGenerator.getInstance();
     
     public Hood(){
 
-        hoodMotor.restoreFactoryDefaults();
-
-        hoodMotor.setInverted(false);
-        hoodMotor.setIdleMode(IdleMode.kBrake);
-        hoodMotor.getEncoder().setPosition(0);
-
-        hoodMotor.setSmartCurrentLimit(20, 35);
-        hoodMotor.enableVoltageCompensation(12);
-        
-        hoodMotor.getPIDController().setP(HoodConstants.HOOD_KP);
+        configMotor();
     }
 
     public static Hood getInstance(){
@@ -63,11 +57,11 @@ public class Hood extends SubsystemBase{
         
         switch(hoodState){
             case OFF:
-                set(0);
+                jog(0);
                 break;
 
             case JOG:
-                set(jogVal);
+                jog(jogVal);
                 break;
 
             case SETPOINT:
@@ -89,7 +83,7 @@ public class Hood extends SubsystemBase{
         hoodMotor.getPIDController().setReference(currentSetpoint.getRotations() * HoodConstants.HOOD_GEARING, ControlType.kPosition);
     }
 
-    public void set(double value){
+    public void jog(double value){
         hoodMotor.set(value);
     }
 
@@ -113,10 +107,10 @@ public class Hood extends SubsystemBase{
     public void zeroRoutine(){
 
         if(!limSwitch.get()) //if switch is not hit
-            set(0);
+            jog(0.1);
 
         else{ //if the switch is hit
-            set(0);
+            jog(0);
             hoodMotor.getEncoder().setPosition(0);
         }
     }
@@ -133,5 +127,21 @@ public class Hood extends SubsystemBase{
         return hoodState;
     }
 
+    public void configGains(){
+        hoodMotor.getPIDController().setP(hoodP.get());
+    }
+
+    public void configMotor(){
+        hoodMotor.restoreFactoryDefaults();
+
+        hoodMotor.setInverted(false);
+        hoodMotor.setIdleMode(IdleMode.kBrake);
+        hoodMotor.getEncoder().setPosition(0);
+
+        hoodMotor.setSmartCurrentLimit(20, 35);
+        hoodMotor.enableVoltageCompensation(12);
+        
+        hoodMotor.getPIDController().setP(HoodConstants.HOOD_KP);
+    }
     
 }

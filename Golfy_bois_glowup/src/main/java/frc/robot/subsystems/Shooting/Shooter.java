@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.VisionManager;
 import frc.robot.util.CommonConversions;
+import frc.robot.util.LiveNumber;
 import frc.robot.util.Shooting.ShotGenerator;
 
 public class Shooter extends SubsystemBase{
@@ -41,11 +42,11 @@ public class Shooter extends SubsystemBase{
 
     ShotGenerator shotGen = ShotGenerator.getInstance();
 
+    private LiveNumber shooterP = new LiveNumber("shooter P", ShooterConstants.SHOOTER_KP);
+    private LiveNumber shooterF = new LiveNumber("shooterF", ShooterConstants.SHOOTER_KF);
+
     public Shooter(){
         configMotors();
-        
-        SmartDashboard.putNumber("Shooter kP", ShooterConstants.SHOOTER_KP);
-        SmartDashboard.putNumber("Shooter kF", ShooterConstants.SHOOTER_KF);
     }
 
     public static Shooter getInstance(){
@@ -110,15 +111,9 @@ public class Shooter extends SubsystemBase{
         return shooterMaster.getEncoder().getVelocity() / ShooterConstants.SHOOTER_GEARING;
     }
 
-    public void configGains(double kP, double kF){
-        shooterMaster.getPIDController().setP(kP);
-        shooterMaster.getPIDController().setFF(kF);
-    }
-
     public void configGains(){
-        configGains(
-            SmartDashboard.getNumber("Shooter kP", ShooterConstants.SHOOTER_KP),
-            SmartDashboard.getNumber("Shooter kF", ShooterConstants.SHOOTER_KF));
+        shooterMaster.getPIDController().setP(shooterP.get());
+        shooterMaster.getPIDController().setFF(shooterF.get());
     }
 
     public void configMotors(){

@@ -22,8 +22,6 @@ public class Tracker extends SubsystemBase{
 
     private final Field2d m_field = new Field2d();
 
-    private DifferentialDriveOdometry odom = new DifferentialDriveOdometry(drive.getHeading(), drive.getLeftDistance(), drive.getRightDistance());
-
     private DifferentialDrivePoseEstimator estimator = new DifferentialDrivePoseEstimator(
         DriveConstants.DRIVE_KINEMATICS,
         drive.getHeading(),
@@ -51,7 +49,7 @@ public class Tracker extends SubsystemBase{
     public void periodic() {
         updatePose();
         logData();
-        m_field.setRobotPose(getPose());
+        //m_field.setRobotPose(getPose());
     }
 
 

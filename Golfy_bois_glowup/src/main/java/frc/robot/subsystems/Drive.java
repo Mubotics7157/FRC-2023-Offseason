@@ -75,7 +75,6 @@ public class Drive extends SubsystemBase{
         SmartDashboard.putNumber("right distance", getRightDistance());
 
         SmartDashboard.putNumber("gyro heading", getHeading().getDegrees());
-
     }
 
     public Rotation2d getHeading(){
@@ -216,8 +215,8 @@ public class Drive extends SubsystemBase{
         leftMaster.config_kP(0, DriveConstants.driveKP);
         rightMaster.config_kP(0, DriveConstants.driveKP);
         
-        leftMaster.config_kD(0, 0);
-        rightMaster.config_kD(0, 0);
+        //leftMaster.config_kD(0, 0);
+        //rightMaster.config_kD(0, 0);
         
         //leftMaster.config_kF(0, DriveConstants.driveKF);
         //rightMaster.config_kF(0, DriveConstants.driveKF);
