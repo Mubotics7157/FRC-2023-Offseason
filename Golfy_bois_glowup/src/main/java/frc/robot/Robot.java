@@ -13,6 +13,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -43,9 +44,11 @@ public class Robot extends LoggedRobot {
     Logger.getInstance().recordMetadata("ProjectName", "FRC2023-Offseason"); // Set a metadata value
 
     if (isReal()) {
+      String logPath = "/media/sda1";
+      Logger.getInstance().addDataReceiver(new WPILOGWriter(logPath)); //Log to rio folder
       //Logger.getInstance().addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
       Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-      new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+      new PowerDistribution(1, ModuleType.kCTRE); // Enables power distribution logging
     } 
 
     else {
@@ -61,6 +64,8 @@ public class Robot extends LoggedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    DataLogManager.start();
 
     neutralModeChooser.setDefaultOption("Brake", NeutralMode.Brake);
     neutralModeChooser.addOption("Coast", NeutralMode.Coast);

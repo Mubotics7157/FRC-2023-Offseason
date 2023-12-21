@@ -8,6 +8,9 @@ import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.util.datalog.BooleanLogEntry;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -21,7 +24,7 @@ public class Tracker extends SubsystemBase{
     private final Drive drive = Drive.getInstance();
 
     private final Field2d m_field = new Field2d();
-
+    
     private DifferentialDrivePoseEstimator estimator = new DifferentialDrivePoseEstimator(
         DriveConstants.DRIVE_KINEMATICS,
         drive.getHeading(),
