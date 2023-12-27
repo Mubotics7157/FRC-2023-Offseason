@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
+
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -41,10 +46,47 @@ public class Robot extends LoggedRobot {
    */
   @Override
   public void robotInit() {
-    Logger.getInstance().recordMetadata("ProjectName", "FRC2023-Offseason"); // Set a metadata value
+    Logger.getInstance().recordMetadata("ProjectName", "FRC2023-Jiggy"); // Set a metadata value
 
     if (isReal()) {
-      String logPath = "/media/sda1";
+      String logPath = "/home/lvuser/logs";
+      int minFreeSpace = 1000000000;
+
+      File directory = new File(logPath);
+
+      if(!directory.exists())
+        directory.mkdir();
+      
+      if (directory.getFreeSpace() < minFreeSpace /*100mb*/) {
+        var files = directory.listFiles();
+
+        if (files != null) {
+            // Sorting the files by name will ensure that the oldest files are deleted first
+            files = Arrays.stream(files).sorted().toArray(File[]::new);
+
+            long bytesToDelete = minFreeSpace - directory.getFreeSpace();
+
+            for (File file : files) {
+                if (file.getName().endsWith(".wpilog")) {
+                    try {
+                        bytesToDelete -= Files.size(file.toPath());
+                    } catch (IOException e) {
+                        System.out.println("Failed to get size of file " + file.getName());
+                        continue;
+                    }
+                    if (file.delete()) {
+                        System.out.println("Deleted " + file.getName() + " to free up space");
+                    } else {
+                        System.out.println("Failed to delete " + file.getName());
+                    }
+                    if (bytesToDelete <= 0) {
+                        break;
+                    }
+                }//if file ends with .wpilog
+            }//for loop
+        }//if files != null
+      }//if the freespace is less than the minimum
+      
       Logger.getInstance().addDataReceiver(new WPILOGWriter(logPath)); //Log to rio folder
       //Logger.getInstance().addDataReceiver(new WPILOGWriter("/U")); // Log to a USB stick
       Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables

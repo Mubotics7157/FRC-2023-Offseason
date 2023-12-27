@@ -30,18 +30,7 @@ public class Tracker extends SubsystemBase{
         drive.getHeading(),
         drive.getLeftDistance(),
         drive.getRightDistance(),
-        new Pose2d(),
-
-    new MatBuilder<>(Nat.N3(), Nat.N1()).fill(
-            .1,
-            .1,
-            .1
-        ),
-        new MatBuilder<>(Nat.N3(), Nat.N1()).fill( //vision boi
-            .5,
-            .5,
-            2.5
-        )
+        new Pose2d()
     );
 
     public Tracker(){
