@@ -6,13 +6,15 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ThroatConstants;
+import frc.robot.util.LiveNumber;
 
 public class Throat extends SubsystemBase{
     
     public enum ThroatState{
         OFF,
         SHOOTING,
-        UNCLOGGING
+        UNCLOGGING,
+        CUSTOM
     }
     
     private static Throat instance = new Throat();
@@ -20,6 +22,8 @@ public class Throat extends SubsystemBase{
     private CANSparkMax throatMotor = new CANSparkMax(ThroatConstants.DEVICE_ID_THROAT, MotorType.kBrushless);
 
     private ThroatState throatState = ThroatState.OFF;
+
+    private LiveNumber customSpeed = new LiveNumber("Custom Throat", 0);
 
     public Throat(){
         configMotor();
@@ -43,6 +47,10 @@ public class Throat extends SubsystemBase{
             case UNCLOGGING:
                 jogThroat(ThroatConstants.THROAT_UNCLOG_SPEED);
                 break;
+            
+            case CUSTOM:
+                jogThroat(customSpeed.get());
+                break;
         }
     }
 
@@ -59,7 +67,6 @@ public class Throat extends SubsystemBase{
         throatMotor.set(value);
     }
     
-
     public void configMotor(){
         throatMotor.restoreFactoryDefaults();
         

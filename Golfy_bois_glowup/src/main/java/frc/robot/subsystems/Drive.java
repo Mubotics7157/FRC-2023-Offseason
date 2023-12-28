@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import javax.lang.model.element.ModuleElement.DirectiveKind;
 
+import org.littletonrobotics.junction.Logger;
 import org.opencv.core.RotatedRect;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -68,13 +69,16 @@ public class Drive extends SubsystemBase{
     }
 
     public void logData(){
-        SmartDashboard.putNumber("left speed", getLeftSpeed());
-        SmartDashboard.putNumber("right speed", getRightSpeed());
+        Logger.getInstance().recordOutput("Drive/left speed", getLeftSpeed());
+        Logger.getInstance().recordOutput("Drive/right speed", getRightSpeed());
 
-        SmartDashboard.putNumber("left distance", getLeftDistance());
-        SmartDashboard.putNumber("right distance", getRightDistance());
+        //SmartDashboard.putNumber("left speed", getLeftSpeed());
+        //SmartDashboard.putNumber("right speed", getRightSpeed());
 
-        SmartDashboard.putNumber("gyro heading", getHeading().getDegrees());
+        //SmartDashboard.putNumber("left distance", getLeftDistance());
+        //SmartDashboard.putNumber("right distance", getRightDistance());
+
+        //SmartDashboard.putNumber("gyro heading", getHeading().getDegrees());
     }
 
     public Rotation2d getHeading(){
@@ -98,11 +102,15 @@ public class Drive extends SubsystemBase{
         double leftSpeed = CommonConversions.metersPerSecToStepsPerDecisec(leftMPS, DriveConstants.WHEEL_DIAMETER_METERS);
         double rightSpeed = CommonConversions.metersPerSecToStepsPerDecisec(rightMPS, DriveConstants.WHEEL_DIAMETER_METERS);
 
-        SmartDashboard.putNumber("wanted left", leftMPS);
-        SmartDashboard.putNumber("wanted right", rightMPS);
+        //SmartDashboard.putNumber("wanted left", leftMPS);
+        //SmartDashboard.putNumber("wanted right", rightMPS);
+        Logger.getInstance().recordOutput("Drive/left speed wanted", leftMPS);
+        Logger.getInstance().recordOutput("Drive/right speed wanted", rightMPS);
 
-        SmartDashboard.putNumber("left error", Math.abs(leftMPS - getLeftSpeed()));
-        SmartDashboard.putNumber("right error", Math.abs(rightMPS - getRightSpeed()));
+        //SmartDashboard.putNumber("left error", Math.abs(leftMPS - getLeftSpeed()));
+        //SmartDashboard.putNumber("right error", Math.abs(rightMPS - getRightSpeed()));
+        Logger.getInstance().recordOutput("Drive/left error", leftMPS - getLeftSpeed());
+        Logger.getInstance().recordOutput("Drive/right errr", rightMPS - getRightSpeed());
 
         if(leftSpeed == 0)
             leftMaster.set(ControlMode.PercentOutput, 0);

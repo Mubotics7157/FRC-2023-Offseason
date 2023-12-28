@@ -50,7 +50,7 @@ public class Tracker extends SubsystemBase{
     }
 
     public void logData(){
-        Logger.getInstance().recordOutput("Estimator Pose", getPose());
+        Logger.getInstance().recordOutput("Drive/Estimated Position", getPose());
     }
 
     private void updatePose(){

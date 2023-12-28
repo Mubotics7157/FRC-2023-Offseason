@@ -7,6 +7,7 @@ import frc.robot.Constants.Setpoints;
 import frc.robot.subsystems.Shooting.Hood.HoodState;
 import frc.robot.subsystems.Shooting.Shooter.ShooterState;
 import frc.robot.subsystems.Shooting.Turret.TurretState;
+import frc.robot.util.LiveNumber;
 
 public class ShooterManager extends SubsystemBase{
     
@@ -25,11 +26,12 @@ public class ShooterManager extends SubsystemBase{
 
     private ShooterManagerState currentState = ShooterManagerState.AUTO;
 
+    private LiveNumber customHood = new LiveNumber("Custom Hood", 0); //degrees
+    private LiveNumber customShooter = new LiveNumber("Custom Shooter", 0); //degrees
+    private LiveNumber customTurret = new LiveNumber("Custom Turret", 0); //rpm
+
     public ShooterManager(){
 
-        SmartDashboard.putNumber("Custom hood", 0); //degrees
-        SmartDashboard.putNumber("Custom shooter", 0); //degrees
-        SmartDashboard.putNumber("Custom turret", 0); //RPM
     }
 
 
@@ -57,9 +59,9 @@ public class ShooterManager extends SubsystemBase{
 
             case CUSTOM:
                 setAll(
-                    Rotation2d.fromDegrees(SmartDashboard.getNumber("Custom turret", 0)),
-                    Rotation2d.fromDegrees(SmartDashboard.getNumber("Custom hood", 0)),
-                    SmartDashboard.getNumber("Custom shooter", 0));
+                    Rotation2d.fromDegrees(customTurret.get()),
+                    Rotation2d.fromDegrees(customHood.get()),
+                    customShooter.get());
                 break;
 
             case ZERO:

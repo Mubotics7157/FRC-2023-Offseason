@@ -21,7 +21,8 @@ public class Spindexer extends SubsystemBase{
         JOG,
         IDLE,
         INTAKING,
-        SHOOTING
+        SHOOTING,
+        CUSTOM
     }
     
     private static Spindexer instance = new Spindexer();
@@ -30,11 +31,15 @@ public class Spindexer extends SubsystemBase{
 
     private SpindexerState spindexerState = SpindexerState.OFF;
 
-    private LiveNumber spindexerP = new LiveNumber("spindexer P", SpindexerConstants.SPINDEXER_KP);
-    private LiveNumber spindexerD = new LiveNumber("spindexer D", SpindexerConstants.SPINDEXER_KD);
-    private LiveNumber spindexerF = new LiveNumber("spindexer F", SpindexerConstants.SPINDEXER_KF);
+    private double jogValue = 0;
+
+    //private LiveNumber spindexerP = new LiveNumber("spindexer P", SpindexerConstants.SPINDEXER_KP);
+    //private LiveNumber spindexerD = new LiveNumber("spindexer D", SpindexerConstants.SPINDEXER_KD);
+    //private LiveNumber spindexerF = new LiveNumber("spindexer F", SpindexerConstants.SPINDEXER_KF);
 
     private LiveNumber rampRate = new LiveNumber("spindexer Ramp Rate", SpindexerConstants.SPINDEXER_RAMP_RATE);
+
+    private LiveNumber customSpeed = new LiveNumber("spindexer speed", 0);
 
     public Spindexer(){
         configMotors();
@@ -49,7 +54,11 @@ public class Spindexer extends SubsystemBase{
         
         switch(spindexerState){
             case OFF:
-                jogSpindexer(0);
+                spin(0);
+                break;
+
+            case JOG:
+                spin(jogValue);
                 break;
             
             case IDLE:
@@ -63,15 +72,19 @@ public class Spindexer extends SubsystemBase{
             case SHOOTING:
                 spin(SpindexerConstants.SHOOTING_SPEED);
                 break;
+
+            case CUSTOM:
+                spin(customSpeed.get());
+                break;
         }
     }
 
-    public void jogSpindexer(double value){
-        spindexerMotor.set(ControlMode.PercentOutput, value);
+    public void setJog(double value){
+        jogValue = value;
     }
 
     public void spin(double value){
-        spindexerMotor.set(ControlMode.Velocity, value);
+        spindexerMotor.set(ControlMode.PercentOutput, value);
     }
 
     public void setState(SpindexerState newState){
@@ -84,11 +97,11 @@ public class Spindexer extends SubsystemBase{
     }
 
     public void configGains(){
-        spindexerMotor.config_kP(0, spindexerP.get());
-        spindexerMotor.config_kD(0, spindexerD.get());
-        spindexerMotor.config_kF(0, spindexerF.get());
+        //spindexerMotor.config_kP(0, spindexerP.get());
+        //spindexerMotor.config_kD(0, spindexerD.get());
+        //spindexerMotor.config_kF(0, spindexerF.get());
 
-        spindexerMotor.configClosedloopRamp(rampRate.get());
+        spindexerMotor.configOpenloopRamp(rampRate.get());
     }
 
     public void configMotors(){
@@ -98,10 +111,10 @@ public class Spindexer extends SubsystemBase{
 
         spindexerMotor.setNeutralMode(NeutralMode.Coast);
 
-        spindexerMotor.configClosedloopRamp(SpindexerConstants.SPINDEXER_RAMP_RATE);
+        spindexerMotor.configOpenloopRamp(SpindexerConstants.SPINDEXER_RAMP_RATE);
 
-        spindexerMotor.config_kP(0, SpindexerConstants.SPINDEXER_KP);
-        spindexerMotor.config_kD(0, SpindexerConstants.SPINDEXER_KD);
-        spindexerMotor.config_kF(0, SpindexerConstants.SPINDEXER_KF);
+        //spindexerMotor.config_kP(0, SpindexerConstants.SPINDEXER_KP);
+        //spindexerMotor.config_kD(0, SpindexerConstants.SPINDEXER_KD);
+        //spindexerMotor.config_kF(0, SpindexerConstants.SPINDEXER_KF);
     }
 }

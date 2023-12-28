@@ -38,7 +38,7 @@ public class Robot extends LoggedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private final SendableChooser<NeutralMode> neutralModeChooser = new SendableChooser<>();
+  private final SendableChooser<String> neutralModeChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -107,10 +107,8 @@ public class Robot extends LoggedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    DataLogManager.start();
-
-    neutralModeChooser.setDefaultOption("Brake", NeutralMode.Brake);
-    neutralModeChooser.addOption("Coast", NeutralMode.Coast);
+    neutralModeChooser.setDefaultOption("Brake", "Brake");
+    neutralModeChooser.addOption("Coast", "Coast");
 
   }
 
@@ -138,9 +136,12 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void disabledPeriodic() {
-    Drive.getInstance().setNeutralMode(
-      neutralModeChooser.getSelected()
-    );
+    if(neutralModeChooser.getSelected() == "Brake"){
+      Drive.getInstance().setNeutralMode(NeutralMode.Brake);
+    }
+    else{
+      Drive.getInstance().setNeutralMode(NeutralMode.Coast);
+    }
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */

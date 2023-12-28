@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Shooting;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -75,6 +77,10 @@ public class Shooter extends SubsystemBase{
                 break;
 
         }
+    }
+
+    public void logData(){
+        Logger.getInstance().recordOutput("Shooter/RPM", getRPM());
     }
 
     public void goToSetpoint(){

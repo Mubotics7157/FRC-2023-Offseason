@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Shooting;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -54,6 +56,7 @@ public class Hood extends SubsystemBase{
 
     @Override
     public void periodic() {
+        logData();
         
         switch(hoodState){
             case OFF:
@@ -79,7 +82,12 @@ public class Hood extends SubsystemBase{
         }
     }
 
-    public void goToSetpoint(){
+    private void logData(){
+        Logger.getInstance().recordOutput("Hood/Position", getAngle().getDegrees());
+        Logger.getInstance().recordOutput("Hood/At Setpoint", atSetpoint());
+    }
+
+    private void goToSetpoint(){
         hoodMotor.getPIDController().setReference(currentSetpoint.getRotations() * HoodConstants.HOOD_GEARING, ControlType.kPosition);
     }
 
@@ -102,6 +110,8 @@ public class Hood extends SubsystemBase{
     public void trackTarget(){
         if(VisionManager.getInstance().getTurretLL().hasTargets())
             currentSetpoint = shotGen.getInterpolatedHood(VisionManager.getInstance().getDistanceToTarget());
+
+        goToSetpoint();
     }
 
     public void zeroRoutine(){

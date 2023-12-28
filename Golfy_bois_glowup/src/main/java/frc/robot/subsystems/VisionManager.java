@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
@@ -31,6 +33,10 @@ public class VisionManager extends SubsystemBase{
         return turretLL;
     }
 
+    public boolean hasTargets(){
+        return turretLL.hasTargets();
+    }
+
     public double getDistanceToTarget(){
         if(turretLL.hasTargets()){
             double distance = (VisionConstants.TARGET_HEIGHT_METERS - VisionConstants.TURRET_LL_HEIGHT_METERS) / Math.tan(VisionConstants.TURRET_LL_MOUNTING_PITCH_RADIANS + turretLL.getTargetPitch().getRadians());
@@ -44,7 +50,9 @@ public class VisionManager extends SubsystemBase{
     }
 
     public void logData(){
-        SmartDashboard.putNumber("limelight Pitch", turretLL.getTargetPitch().getDegrees());
-        SmartDashboard.putNumber("limelight Yaw", turretLL.getTargetYaw().getDegrees());
+        //SmartDashboard.putNumber("limelight Pitch", turretLL.getTargetPitch().getDegrees());
+        //SmartDashboard.putNumber("limelight Yaw", turretLL.getTargetYaw().getDegrees());
+        Logger.getInstance().recordOutput("Limelight/Calculated Distance", getDistanceToTarget());
+        Logger.getInstance().recordOutput("Limelight/Has Targets", turretLL.hasTargets());
     }
 }
