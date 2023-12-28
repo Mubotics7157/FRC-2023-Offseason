@@ -41,7 +41,8 @@ public class Turret extends SubsystemBase{
 
     TurretState turretState = TurretState.SETPOINT;
 
-    CANSparkMax turretMotor = new CANSparkMax(TurretConstants.DEVICE_ID_TURRET, MotorType.kBrushless);
+    //CANSparkMax turretMotor = new CANSparkMax(TurretConstants.DEVICE_ID_TURRET, MotorType.kBrushless);
+    WPI_TalonFX turretMotor = new WPI_TalonFX(TurretConstants.DEVICE_ID_TURRET);
 
     PIDController rotationController = new PIDController(TurretConstants.TRACKING_KP, 0, TurretConstants.TRACKING_KD);
 
@@ -94,9 +95,7 @@ public class Turret extends SubsystemBase{
     }
 
     public void goToSetpoint(){
-        turretMotor.getPIDController().setReference(
-            currentSetpoint.getRotations() * TurretConstants.TURRET_GEARING,
-            ControlType.kPosition);
+        turretMotor.set(ControlMode.Position, currentSetpoint.getRotations() * 2048 * TurretConstants.TURRET_GEARING);
     }
 
     public void jog(double value){
@@ -108,7 +107,7 @@ public class Turret extends SubsystemBase{
     }
 
     public Rotation2d getAngle(){
-        return Rotation2d.fromRotations(turretMotor.getEncoder().getPosition() / TurretConstants.TURRET_GEARING);
+        return Rotation2d.fromRotations((turretMotor.getSelectedSensorPosition() / 2048) / TurretConstants.TURRET_GEARING);
     }
 
     public TurretState getState(){
@@ -144,9 +143,7 @@ public class Turret extends SubsystemBase{
             wantedAngle = TurretConstants.TURRET_MAX;
         }
 
-        turretMotor.getPIDController().setReference(
-            wantedAngle.getRotations() * TurretConstants.TURRET_GEARING,
-            ControlType.kPosition);
+        turretMotor.set(ControlMode.Position, wantedAngle.getRotations() * TurretConstants.TURRET_GEARING * 2048);
 
     }
 
@@ -165,29 +162,28 @@ public class Turret extends SubsystemBase{
     }
 
     public void configGains(){
-        turretMotor.getPIDController().setP(turretP.get());
+        turretMotor.config_kP(0, turretP.get());
 
         rotationController.setP(trackingP.get());
         rotationController.setD(trackingD.get());
     }
 
     public void zeroEncoder(){
-        turretMotor.getEncoder().setPosition(0);
+        turretMotor.setSelectedSensorPosition(0);
     }
 
     public void configMotor(){
-        turretMotor.restoreFactoryDefaults();
+        turretMotor.configFactoryDefault();
 
         turretMotor.setInverted(false);
-        turretMotor.setIdleMode(IdleMode.kBrake);
-        turretMotor.getEncoder().setPosition(0);
+        turretMotor.setNeutralMode(NeutralMode.Brake);
+        turretMotor.setSelectedSensorPosition(0);
 
-        turretMotor.setSmartCurrentLimit(20, 35);
-        turretMotor.enableVoltageCompensation(12);
-    
-        SparkMaxPIDController controller = turretMotor.getPIDController();
+        turretMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40, 40, 0.1));
+        turretMotor.configVoltageCompSaturation(12);
+        turretMotor.enableVoltageCompensation(true);
 
-        controller.setP(turretP.get());
+        turretMotor.config_kP(0, TurretConstants.TURRET_KP);
 
     }
     
