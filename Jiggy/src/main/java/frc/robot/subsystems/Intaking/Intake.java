@@ -1,5 +1,8 @@
 package frc.robot.subsystems.Intaking;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -22,7 +25,8 @@ public class Intake extends SubsystemBase{
     
     private static Intake instance = new Intake();
 
-    private CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.DEVICE_ID_INTAKE, MotorType.kBrushless);
+    //private CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.DEVICE_ID_INTAKE, MotorType.kBrushless);
+    private WPI_TalonFX intakeMotor = new WPI_TalonFX(IntakeConstants.DEVICE_ID_INTAKE);
     private CANSparkMax actuatorMotor = new CANSparkMax(IntakeConstants.DEVICE_ID_ACTUATOR, MotorType.kBrushless);
 
     private IntakeState intakeState = IntakeState.STOW;
@@ -32,6 +36,9 @@ public class Intake extends SubsystemBase{
 
     private LiveNumber actuatorP = new LiveNumber("Actuator kP", IntakeConstants.ACTUATOR_KP);
     private LiveNumber actuatorD = new LiveNumber("Actuator kD", IntakeConstants.ACTUATOR_KD);
+
+    private LiveNumber intakeP = new LiveNumber("Intake kP", IntakeConstants.INTAKE_KP);
+    private LiveNumber intakeFF = new LiveNumber("Intake kF", IntakeConstants.INTAKE_KF);
 
     public Intake(){
         configMotors();
@@ -47,12 +54,12 @@ public class Intake extends SubsystemBase{
         switch(intakeState){
             case STOW:
                 goToPosition(IntakeConstants.ACTUATOR_STOW);
-                setIntake(0);
+                jogIntake(0);
                 break;
 
             case DOWN:
                 goToPosition(IntakeConstants.ACTUATOR_DOWN);
-                setIntake(0);
+                jogIntake(0);
                 break;
 
             case INTAKING:
@@ -77,8 +84,12 @@ public class Intake extends SubsystemBase{
         actuatorMotor.getPIDController().setReference(position, ControlType.kPosition);
     }
 
-    private void setIntake(double value){
+    private void jogIntake(double value){
         intakeMotor.set(value);
+    }
+
+    private void setIntake(double rpm){
+        intakeMotor.set(ControlMode.Velocity, rpm);
     }
 
     public void setState(IntakeState newState){
@@ -93,16 +104,19 @@ public class Intake extends SubsystemBase{
     public void configGains(){
         actuatorMotor.getPIDController().setP(actuatorP.get());
         actuatorMotor.getPIDController().setD(actuatorD.get());
+
+        intakeMotor.config_kP(0, intakeP.get());
+        intakeMotor.config_kF(0, intakeFF.get());
     }
 
     public void configMotors(){
-        intakeMotor.restoreFactoryDefaults();
+        intakeMotor.configFactoryDefault();
         actuatorMotor.restoreFactoryDefaults();
 
         intakeMotor.setInverted(false);
         actuatorMotor.setInverted(false);
 
-        intakeMotor.setIdleMode(IdleMode.kBrake);
+        intakeMotor.setNeutralMode(NeutralMode.Brake);
         actuatorMotor.setIdleMode(IdleMode.kBrake);
 
         actuatorMotor.getEncoder().setPosition(0);

@@ -136,8 +136,11 @@ public final class Constants {
     public static final double ACTUATOR_KP = 0.002;
     public static final double ACTUATOR_KD = 0.002;
 
-    public static final double INTAKE_SPEED = 0.75;
-    public static final double OUTTAKE_SPEED = -0.75;
+    public static final double INTAKE_KP = 0;
+    public static final double INTAKE_KF = 0;
+
+    public static final double INTAKE_SPEED = 4000;
+    public static final double OUTTAKE_SPEED = -4000;
   }
 
   public static class ThroatConstants{
