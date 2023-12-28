@@ -55,8 +55,6 @@ public class Drive extends SubsystemBase{
         gyro.reset();
 
         configMotors();
-
-        SmartDashboard.putNumber("drive kP", DriveConstants.driveKP);
     }
 
     public static Drive getInstance(){
