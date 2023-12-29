@@ -13,12 +13,15 @@ import frc.robot.commands.drive.DriveTank;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.PathHandler;
 import frc.robot.subsystems.Tracker;
+import frc.robot.subsystems.Intaking.Intake;
+import frc.robot.subsystems.Intaking.Intake.IntakeState;
 import frc.robot.subsystems.Shooting.Hood;
 import frc.robot.subsystems.Shooting.Shooter;
 import frc.robot.subsystems.Shooting.ShooterManager;
 import frc.robot.subsystems.Shooting.Hood.HoodState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -35,6 +38,7 @@ public class RobotContainer {
   private final Drive drive = Drive.getInstance();
   private final Tracker tracker = Tracker.getInstance();
   private final PathHandler handler = PathHandler.getInstance();
+  private final Intake intake = Intake.getInstance();
   //private final ShooterManager shooterManager = ShooterManager.getInstance();
   //private final Hood hood = Hood.getInstance();
   //private final Shooter shooter = Shooter.getInstance();
@@ -64,11 +68,17 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    m_driverController.a().onTrue(new InstantCommand(tracker::resetPose));
-    m_driverController.x().onTrue(new InstantCommand(drive::configGains));
+    m_driverController.leftTrigger().onTrue(new SequentialCommandGroup(new SetState<IntakeState>(intake::setState, IntakeState.CUSTOM), new InstantCommand(intake::configGains)));
+    m_driverController.leftTrigger().onFalse(new SetState<IntakeState>(intake::setState, IntakeState.OFF));
 
-    m_driverController.leftTrigger().whileTrue(new ChangeFactors(2, Math.PI, drive));
-    m_driverController.b().onTrue(new InstantCommand(drive::resetEncoders));
+    m_driverController.a().onTrue(new InstantCommand(intake::zeroEncoder));
+    //m_driverController.a().onTrue(new InstantCommand(tracker::resetPose));
+    //m_driverController.x().onTrue(new InstantCommand(drive::configGains));
+
+
+
+    //m_driverController.leftTrigger().whileTrue(new ChangeFactors(2, Math.PI, drive));
+    //m_driverController.b().onTrue(new InstantCommand(drive::resetEncoders));
 
     //m_driverController.a().onTrue(new SetState<HoodState>(hood::setState, HoodState.DYNAMIC));
   }

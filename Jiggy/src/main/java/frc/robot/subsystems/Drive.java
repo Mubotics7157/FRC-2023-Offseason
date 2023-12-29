@@ -183,11 +183,11 @@ public class Drive extends SubsystemBase{
     }
 
     public void configGains(){
-        leftMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
+        leftMaster.config_kP(0, driveP.get());
         //leftMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
         //leftMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
 
-        rightMaster.config_kP(0, SmartDashboard.getNumber("drive kP", 0));
+        rightMaster.config_kP(0, driveP.get());
         //rightMaster.config_kD(0, SmartDashboard.getNumber("drive kD", 0));
         //rightMaster.config_kF(0, SmartDashboard.getNumber("drive kF", 0));
 

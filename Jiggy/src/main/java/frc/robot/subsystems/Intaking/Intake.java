@@ -2,6 +2,7 @@ package frc.robot.subsystems.Intaking;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
@@ -16,6 +17,7 @@ import frc.robot.util.LiveNumber;
 public class Intake extends SubsystemBase{
 
     public enum IntakeState{
+        OFF,
         STOW,
         DOWN,
         INTAKING,
@@ -53,6 +55,11 @@ public class Intake extends SubsystemBase{
     public void periodic() {
         
         switch(intakeState){
+            case OFF:
+                jogActuator(0);
+                jogIntake(0);
+                break;
+                
             case STOW:
                 goToPosition(IntakeConstants.ACTUATOR_STOW);
                 jogIntake(0);
@@ -90,6 +97,10 @@ public class Intake extends SubsystemBase{
         intakeMotor.set(value);
     }
 
+    private void jogActuator(double value){
+        actuatorMotor.set(value);
+    }
+
     private void setIntake(double rpm){
         intakeMotor.set(ControlMode.Velocity, rpm);
     }
@@ -104,7 +115,7 @@ public class Intake extends SubsystemBase{
     }
 
     public void zeroEncoder(){
-        
+        actuatorMotor.setSelectedSensorPosition(0);
     }
 
     public void configGains(){
@@ -126,6 +137,8 @@ public class Intake extends SubsystemBase{
 
         intakeMotor.setNeutralMode(NeutralMode.Brake);
         actuatorMotor.setNeutralMode(NeutralMode.Brake);
+
+        intakeMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 35, 0.1));
 
         actuatorMotor.setSelectedSensorPosition(0);
 

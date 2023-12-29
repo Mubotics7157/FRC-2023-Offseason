@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.VisionManager;
 import frc.robot.util.CommonConversions;
 import frc.robot.util.Limelight;
@@ -29,12 +30,14 @@ public class Turret extends SubsystemBase{
         OFF,
         JOG,
         SETPOINT,
+        FIELD_ORIENTED,
         DYNAMIC,
         ZERO
     }
     private static Turret instance = new Turret();
 
     private Rotation2d currentSetpoint = new Rotation2d();
+    private Rotation2d fieldOrientedSetpoint = new Rotation2d();
     public double jogVal = 0;
 
     private Limelight turretLL  = VisionManager.getInstance().getTurretLL();
@@ -79,6 +82,10 @@ public class Turret extends SubsystemBase{
                 goToSetpoint();
                 break;
 
+            case FIELD_ORIENTED:
+                goToPositionFieldOriented();
+                break;
+
             case DYNAMIC:
                 trackTarget();
                 break;
@@ -108,6 +115,13 @@ public class Turret extends SubsystemBase{
 
     public Rotation2d getAngle(){
         return Rotation2d.fromRotations((turretMotor.getSelectedSensorPosition() / 2048) / TurretConstants.TURRET_GEARING);
+    }
+
+    public void goToPositionFieldOriented(){
+        Rotation2d angleToGoTo = fieldOrientedSetpoint.minus(Drive.getInstance().getHeading());
+
+        setSetpoint(angleToGoTo);
+        goToSetpoint();
     }
 
     public TurretState getState(){
