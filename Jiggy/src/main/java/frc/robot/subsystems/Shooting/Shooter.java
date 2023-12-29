@@ -45,7 +45,7 @@ public class Shooter extends SubsystemBase{
     ShotGenerator shotGen = ShotGenerator.getInstance();
 
     private LiveNumber shooterP = new LiveNumber("shooter P", ShooterConstants.SHOOTER_KP);
-    private LiveNumber shooterF = new LiveNumber("shooterF", ShooterConstants.SHOOTER_KF);
+    private LiveNumber shooterF = new LiveNumber("shooter F", ShooterConstants.SHOOTER_KF);
 
     public Shooter(){
         configMotors();

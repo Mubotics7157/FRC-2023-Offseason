@@ -73,9 +73,11 @@ public final class Constants {
 
     public static final double HOOD_KP = 0.075;
 
-    public static final int HOOD_GEARING = 5;
+    public static final int HOOD_GEARING = 15;
+    //this isnt the actual gearing rotation its just to make the units smaller for easier reading
 
     public static final int DEVICE_ID_LIMIT_SWITCH = 2;
+    public static final boolean MAG_DETECTED = true;
   }
 
   public static class TurretConstants{
@@ -88,11 +90,12 @@ public final class Constants {
 
     public static final double TURRET_KP = 0.075;
 
-    public static final int TURRET_GEARING = 15;
+    public static final double TURRET_GEARING = 210;
 
     public static final Rotation2d TURRET_MAX = Rotation2d.fromDegrees(270);
 
     public static final int DEVICE_ID_LIMIT_SWITCH = 1;
+    public static final boolean MAG_DETECTED = true;
   }
 
   public static class ShooterConstants{
@@ -157,11 +160,11 @@ public final class Constants {
   public static class VisionConstants{
     public static final String TURRET_LL_NAME = "turret";
 
-    public static final double TURRET_LL_HEIGHT_METERS = 1;
+    public static final double TURRET_LL_HEIGHT_METERS = Units.inchesToMeters(23.359);
     
-    public static final double TARGET_HEIGHT_METERS = 4;
+    public static final double TARGET_HEIGHT_METERS = 4; //change this for reality
 
-    public static final double TURRET_LL_MOUNTING_PITCH_RADIANS = Units.degreesToRadians(20);
+    public static final double TURRET_LL_MOUNTING_PITCH_RADIANS = Units.degreesToRadians(60);
   }
 
 }
