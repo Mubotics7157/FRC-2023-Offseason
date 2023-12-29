@@ -27,7 +27,8 @@ public class Intake extends SubsystemBase{
 
     //private CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.DEVICE_ID_INTAKE, MotorType.kBrushless);
     private WPI_TalonFX intakeMotor = new WPI_TalonFX(IntakeConstants.DEVICE_ID_INTAKE);
-    private CANSparkMax actuatorMotor = new CANSparkMax(IntakeConstants.DEVICE_ID_ACTUATOR, MotorType.kBrushless);
+    private WPI_TalonFX actuatorMotor = new WPI_TalonFX(IntakeConstants.DEVICE_ID_ACTUATOR);
+    //private CANSparkMax actuatorMotor = new CANSparkMax(IntakeConstants.DEVICE_ID_ACTUATOR, MotorType.kBrushless);
 
     private IntakeState intakeState = IntakeState.STOW;
 
@@ -81,7 +82,8 @@ public class Intake extends SubsystemBase{
     }
 
     private void goToPosition(double position){
-        actuatorMotor.getPIDController().setReference(position, ControlType.kPosition);
+        //actuatorMotor.getPIDController().setReference(position, ControlType.kPosition);
+        actuatorMotor.set(ControlMode.Position, position);
     }
 
     private void jogIntake(double value){
@@ -101,9 +103,15 @@ public class Intake extends SubsystemBase{
         return intakeState;
     }
 
+    public void zeroEncoder(){
+        
+    }
+
     public void configGains(){
-        actuatorMotor.getPIDController().setP(actuatorP.get());
-        actuatorMotor.getPIDController().setD(actuatorD.get());
+        //actuatorMotor.getPIDController().setP(actuatorP.get());
+        //actuatorMotor.getPIDController().setD(actuatorD.get());
+        actuatorMotor.config_kP(0, actuatorP.get());
+        actuatorMotor.config_kD(0, actuatorD.get());
 
         intakeMotor.config_kP(0, intakeP.get());
         intakeMotor.config_kF(0, intakeFF.get());
@@ -111,19 +119,18 @@ public class Intake extends SubsystemBase{
 
     public void configMotors(){
         intakeMotor.configFactoryDefault();
-        actuatorMotor.restoreFactoryDefaults();
+        actuatorMotor.configFactoryDefault();
 
         intakeMotor.setInverted(false);
         actuatorMotor.setInverted(false);
 
         intakeMotor.setNeutralMode(NeutralMode.Brake);
-        actuatorMotor.setIdleMode(IdleMode.kBrake);
+        actuatorMotor.setNeutralMode(NeutralMode.Brake);
 
-        actuatorMotor.getEncoder().setPosition(0);
-        
-        SparkMaxPIDController controller = actuatorMotor.getPIDController();
-        controller.setP(IntakeConstants.ACTUATOR_KP);
-        controller.setD(IntakeConstants.ACTUATOR_KD);
+        actuatorMotor.setSelectedSensorPosition(0);
+
+        actuatorMotor.config_kP(0, IntakeConstants.ACTUATOR_KP);
+        actuatorMotor.config_kD(0, IntakeConstants.ACTUATOR_KD);
         
     }
 
