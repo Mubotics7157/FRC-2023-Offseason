@@ -42,6 +42,7 @@ public class Shooter extends SubsystemBase{
 
     private double jogValue = 0;
 
+
     ShotGenerator shotGen = ShotGenerator.getInstance();
 
     private LiveNumber shooterP = new LiveNumber("shooter P", ShooterConstants.SHOOTER_KP);
@@ -57,6 +58,7 @@ public class Shooter extends SubsystemBase{
 
     @Override
     public void periodic() {
+        logData();
 
         switch(state){
             case OFF:
@@ -101,6 +103,10 @@ public class Shooter extends SubsystemBase{
         shooterMaster.set(value);
     }
 
+    public void setJog(double value){
+        jogValue = value;
+    }
+
     public void setSetpoint(double wantedSetpoint){
         currentSetpoint = wantedSetpoint;
     }
@@ -114,7 +120,7 @@ public class Shooter extends SubsystemBase{
     }
 
     public double getRPM(){
-        return shooterMaster.getEncoder().getVelocity() / ShooterConstants.SHOOTER_GEARING;
+        return shooterMaster.getEncoder().getVelocity();// / ShooterConstants.SHOOTER_GEARING;
     }
 
     public void configGains(){
@@ -126,15 +132,17 @@ public class Shooter extends SubsystemBase{
         shooterMaster.restoreFactoryDefaults();
         shooterSlave.restoreFactoryDefaults();
     
-        shooterMaster.setInverted(false);
-        shooterSlave.setInverted(true);
+        //shooterMaster.setInverted(false);
+        //shooterSlave.setInverted(true);
 
         shooterMaster.setIdleMode(IdleMode.kCoast);
         shooterSlave.setIdleMode(IdleMode.kCoast);
 
-        shooterSlave.follow(shooterMaster);
+        shooterMaster.setInverted(true);
 
-        shooterMaster.setSmartCurrentLimit(35);
+        shooterSlave.follow(shooterMaster, true);
+
+        //shooterMaster.setSmartCurrentLimit(35);
         shooterMaster.enableVoltageCompensation(12);
 
         SparkMaxPIDController controller = shooterMaster.getPIDController();

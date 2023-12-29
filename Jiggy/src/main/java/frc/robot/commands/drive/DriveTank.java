@@ -59,8 +59,8 @@ public class DriveTank extends CommandBase{
         //DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds(modifyInputs(left, false), modifyInputs(right, false));
 
         drive.setSpeeds(new DifferentialDriveWheelSpeeds(
-            -Mutil.modifyInputs(leftInput, drive.getDriveFactor()),
-            -Mutil.modifyInputs(rightInput, drive.getDriveFactor())
+            Mutil.modifyInputs(leftInput, drive.getDriveFactor()),
+            Mutil.modifyInputs(rightInput, drive.getDriveFactor())
             ));
     }
 

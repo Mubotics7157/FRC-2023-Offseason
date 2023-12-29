@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Intaking;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -53,6 +55,7 @@ public class Intake extends SubsystemBase{
 
     @Override
     public void periodic() {
+        logData();
         
         switch(intakeState){
             case OFF:
@@ -118,6 +121,19 @@ public class Intake extends SubsystemBase{
         actuatorMotor.setSelectedSensorPosition(0);
     }
 
+    public void logData(){
+        Logger.getInstance().recordOutput("Intake/Actuator Position", getPosition());
+        Logger.getInstance().recordOutput("Intake/Intake Speed", getRPM());
+    }
+
+    public double getPosition(){
+        return actuatorMotor.getSelectedSensorPosition();
+    }
+
+    public double getRPM(){
+        return intakeMotor.getSelectedSensorVelocity();
+    }
+
     public void configGains(){
         //actuatorMotor.getPIDController().setP(actuatorP.get());
         //actuatorMotor.getPIDController().setD(actuatorD.get());
@@ -132,15 +148,19 @@ public class Intake extends SubsystemBase{
         intakeMotor.configFactoryDefault();
         actuatorMotor.configFactoryDefault();
 
-        intakeMotor.setInverted(false);
+        intakeMotor.setInverted(true);
         actuatorMotor.setInverted(false);
 
         intakeMotor.setNeutralMode(NeutralMode.Brake);
         actuatorMotor.setNeutralMode(NeutralMode.Brake);
 
-        intakeMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 35, 0.1));
+        //intakeMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 35, 35, 0.1));
 
         actuatorMotor.setSelectedSensorPosition(0);
+        actuatorMotor.configAllowableClosedloopError(0, 0);
+
+        intakeMotor.config_kP(0, IntakeConstants.INTAKE_KP);
+        intakeMotor.config_kF(0, IntakeConstants.INTAKE_KF);
 
         actuatorMotor.config_kP(0, IntakeConstants.ACTUATOR_KP);
         actuatorMotor.config_kD(0, IntakeConstants.ACTUATOR_KD);

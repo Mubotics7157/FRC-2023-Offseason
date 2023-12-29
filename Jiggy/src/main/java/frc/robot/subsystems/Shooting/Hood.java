@@ -95,6 +95,10 @@ public class Hood extends SubsystemBase{
         hoodMotor.set(value);
     }
 
+    public void setJog(double value){
+        jogVal = value;
+    }
+
     public void setSetpoint(Rotation2d wantedSetpoint){
         currentSetpoint = wantedSetpoint;
     }

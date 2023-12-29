@@ -41,7 +41,7 @@ public class Throat extends SubsystemBase{
                 break;
             
             case SHOOTING:
-                jogThroat(ThroatConstants.THROAT_SHOOTING_SPEED);
+                jogThroat(0.5);
                 break;
             
             case UNCLOGGING:
@@ -70,7 +70,7 @@ public class Throat extends SubsystemBase{
     public void configMotor(){
         throatMotor.restoreFactoryDefaults();
         
-        throatMotor.setInverted(false);
+        throatMotor.setInverted(true);
 
         throatMotor.setIdleMode(IdleMode.kBrake);
     }

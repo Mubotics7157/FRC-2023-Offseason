@@ -109,6 +109,10 @@ public class Turret extends SubsystemBase{
         turretMotor.set(value);
     }
 
+    public void setJog(double value){
+        jogVal = value;
+    }
+
     public void setSetpoint(Rotation2d wantedSetpoint){
         currentSetpoint = wantedSetpoint;
     }

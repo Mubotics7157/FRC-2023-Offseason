@@ -69,7 +69,7 @@ public final class Constants {
 
   public static class HoodConstants{
 
-    public static final int DEVICE_ID_HOOD = 5;
+    public static final int DEVICE_ID_HOOD = 21;
 
     public static final double HOOD_KP = 0.075;
 
@@ -82,7 +82,7 @@ public final class Constants {
 
   public static class TurretConstants{
 
-    public static final int DEVICE_ID_TURRET = 6;
+    public static final int DEVICE_ID_TURRET = 16;
 
     public static final double TRACKING_KP = 0;
     public static final double TRACKING_KI = 0;
@@ -100,8 +100,8 @@ public final class Constants {
 
   public static class ShooterConstants{
     
-    public static final int DEVICE_ID_SHOOTER_MASTER = 7;
-    public static final int DEVICE_ID_SHOOT_SLAVE = 8;
+    public static final int DEVICE_ID_SHOOTER_MASTER = 19;
+    public static final int DEVICE_ID_SHOOT_SLAVE = 20;
 
     public static final double SHOOTER_GEARING = 5;
 
@@ -112,7 +112,7 @@ public final class Constants {
   }
 
   public static class SpindexerConstants{
-    public static final int DEVICE_ID_SPINDEXER = 6;
+    public static final int DEVICE_ID_SPINDEXER = 15;
 
     public static final double SPINDEXER_GEARING = 15;
 
@@ -128,26 +128,26 @@ public final class Constants {
   }
 
   public static class IntakeConstants{
-    public static final int DEVICE_ID_INTAKE = 7;
-    public static final int DEVICE_ID_ACTUATOR = 8;
+    public static final int DEVICE_ID_INTAKE = 18;
+    public static final int DEVICE_ID_ACTUATOR = 17;
 
     public static final double ACTUATOR_GEAR_RATIO = 8;
 
-    public static final double ACTUATOR_STOW = 0;
-    public static final double ACTUATOR_DOWN = 2000;
+    public static final double ACTUATOR_STOW = -7000;
+    public static final double ACTUATOR_DOWN = -2900;
 
-    public static final double ACTUATOR_KP = 0.002;
-    public static final double ACTUATOR_KD = 0.002;
+    public static final double ACTUATOR_KP = 0.05;
+    public static final double ACTUATOR_KD = 0;
 
-    public static final double INTAKE_KP = 0;
-    public static final double INTAKE_KF = 0;
+    public static final double INTAKE_KP = 0.005;
+    public static final double INTAKE_KF = 0.076;
 
-    public static final double INTAKE_SPEED = 4000;
-    public static final double OUTTAKE_SPEED = -4000;
+    public static final double INTAKE_SPEED = 5700;
+    public static final double OUTTAKE_SPEED = -5700;
   }
 
   public static class ThroatConstants{
-    public static final int DEVICE_ID_THROAT = 7;
+    public static final int DEVICE_ID_THROAT = 22;
     public static final double THROAT_SHOOTING_SPEED = 0.5;
     public static final double THROAT_UNCLOG_SPEED = -0.2;
   }

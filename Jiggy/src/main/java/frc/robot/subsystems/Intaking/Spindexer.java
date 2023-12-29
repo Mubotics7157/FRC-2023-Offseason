@@ -66,11 +66,12 @@ public class Spindexer extends SubsystemBase{
                 break;
             
             case INTAKING:
-                spin(SpindexerConstants.INTAKING_SPEED);
+                //spin(SpindexerConstants.INTAKING_SPEED);
+                spin(0.25);
                 break;
             
             case SHOOTING:
-                spin(SpindexerConstants.SHOOTING_SPEED);
+                spin(0.4);
                 break;
 
             case CUSTOM:
@@ -111,7 +112,7 @@ public class Spindexer extends SubsystemBase{
 
         spindexerMotor.setNeutralMode(NeutralMode.Coast);
 
-        spindexerMotor.configOpenloopRamp(SpindexerConstants.SPINDEXER_RAMP_RATE);
+        //spindexerMotor.configOpenloopRamp(SpindexerConstants.SPINDEXER_RAMP_RATE);
 
         //spindexerMotor.config_kP(0, SpindexerConstants.SPINDEXER_KP);
         //spindexerMotor.config_kD(0, SpindexerConstants.SPINDEXER_KD);

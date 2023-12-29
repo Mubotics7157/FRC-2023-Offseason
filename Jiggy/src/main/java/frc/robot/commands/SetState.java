@@ -17,5 +17,5 @@ public class SetState<T> extends CommandBase{
     @Override
     public void initialize() {
         method.accept(stateType);
-    }
+    } 
 }
