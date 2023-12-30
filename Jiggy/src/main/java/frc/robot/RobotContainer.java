@@ -93,16 +93,10 @@ public class RobotContainer {
    */
   private void configureBindings() {
     m_driverController.povLeft().whileTrue(new JogTurret(() -> -0.75, turret));
-    //m_driverController.povLeft().onFalse(new InstantCommand(() -> turret.setState(TurretState.OFF)));
-
     m_driverController.povRight().whileTrue(new JogTurret(() -> 0.75, turret));
-    //m_driverController.povRight().onFalse(new InstantCommand(() -> turret.setState(TurretState.OFF)));
 
     m_driverController.povUp().whileTrue(new JogHood(() -> -0.3, hood));
-    //m_driverController.povUp().onFalse(new InstantCommand(() -> hood.setState(HoodState.OFF)));
-
     m_driverController.povDown().whileTrue(new JogHood(() -> 0.3, hood));
-    ///m_driverController.povDown().onFalse(new InstantCommand(() -> hood.setState(HoodState.OFF)));
 
     m_driverController.a().onTrue(new ParallelCommandGroup(new InstantCommand(() -> throat.setState(ThroatState.SHOOTING))));
     m_driverController.a().onFalse(new ParallelCommandGroup(new InstantCommand(() -> throat.setState(ThroatState.OFF))));

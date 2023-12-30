@@ -50,8 +50,8 @@ public final class Constants {
 
     public static final String DRIVE_CANIVORE_ID = "drive";
 
-    public static final double MAX_TANGENTIAL_VELOCITY = 7;
-    public static final double MAX_TELE_TANGENTIAL_VELOCITY = 7;
+    public static final double MAX_TANGENTIAL_VELOCITY = 6.57;
+    public static final double MAX_TELE_TANGENTIAL_VELOCITY = 6.57;
 
     public static final double MAX_TELE_ANGULAR_VELOCITY = 2 * Math.PI;
 
@@ -135,6 +135,9 @@ public final class Constants {
 
     public static final double ACTUATOR_STOW = -7000;
     public static final double ACTUATOR_DOWN = -2900;
+
+    public static final double ACTUATOR_ACCELERATION = 1000;
+    public static final double ACTUATOR_CRUISE_VELOCITY = 1000;
 
     public static final double ACTUATOR_KP = 0.05;
     public static final double ACTUATOR_KD = 0;

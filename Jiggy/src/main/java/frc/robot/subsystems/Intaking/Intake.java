@@ -42,8 +42,8 @@ public class Intake extends SubsystemBase{
     private LiveNumber actuatorP = new LiveNumber("Actuator kP", IntakeConstants.ACTUATOR_KP);
     private LiveNumber actuatorD = new LiveNumber("Actuator kD", IntakeConstants.ACTUATOR_KD);
 
-    private LiveNumber intakeP = new LiveNumber("Intake kP", IntakeConstants.INTAKE_KP);
-    private LiveNumber intakeFF = new LiveNumber("Intake kF", IntakeConstants.INTAKE_KF);
+    //private LiveNumber intakeP = new LiveNumber("Intake kP", IntakeConstants.INTAKE_KP);
+    //private LiveNumber intakeFF = new LiveNumber("Intake kF", IntakeConstants.INTAKE_KF);
 
     public Intake(){
         configMotors();
@@ -92,8 +92,8 @@ public class Intake extends SubsystemBase{
     }
 
     private void goToPosition(double position){
-        //actuatorMotor.getPIDController().setReference(position, ControlType.kPosition);
-        actuatorMotor.set(ControlMode.Position, position);
+        actuatorMotor.set(ControlMode.MotionMagic, position);
+        //actuatorMotor.set(ControlMode.Position, position);
     }
 
     private void jogIntake(double value){
@@ -106,6 +106,7 @@ public class Intake extends SubsystemBase{
 
     private void setIntake(double rpm){
         intakeMotor.set(ControlMode.Velocity, rpm);
+        Logger.getInstance().recordOutput("Intake/Wanted Intake RPM", rpm);
     }
 
     public void setState(IntakeState newState){
@@ -140,8 +141,8 @@ public class Intake extends SubsystemBase{
         actuatorMotor.config_kP(0, actuatorP.get());
         actuatorMotor.config_kD(0, actuatorD.get());
 
-        intakeMotor.config_kP(0, intakeP.get());
-        intakeMotor.config_kF(0, intakeFF.get());
+        //intakeMotor.config_kP(0, intakeP.get());
+        //intakeMotor.config_kF(0, intakeFF.get());
     }
 
     public void configMotors(){
@@ -159,6 +160,9 @@ public class Intake extends SubsystemBase{
         actuatorMotor.setSelectedSensorPosition(0);
         actuatorMotor.configAllowableClosedloopError(0, 0);
 
+        actuatorMotor.configMotionAcceleration(IntakeConstants.ACTUATOR_ACCELERATION);
+        actuatorMotor.configMotionCruiseVelocity(IntakeConstants.ACTUATOR_CRUISE_VELOCITY);
+
         intakeMotor.config_kP(0, IntakeConstants.INTAKE_KP);
         intakeMotor.config_kF(0, IntakeConstants.INTAKE_KF);
 
@@ -168,3 +172,4 @@ public class Intake extends SubsystemBase{
     }
 
 }
+    
