@@ -42,6 +42,9 @@ public class Intake extends SubsystemBase{
     private LiveNumber actuatorP = new LiveNumber("Actuator kP", IntakeConstants.ACTUATOR_KP);
     private LiveNumber actuatorD = new LiveNumber("Actuator kD", IntakeConstants.ACTUATOR_KD);
 
+    private LiveNumber actuatorVelocity = new LiveNumber("Actuator Velocity", IntakeConstants.ACTUATOR_CRUISE_VELOCITY);
+    private LiveNumber actuatorAcceleration = new LiveNumber("Actuator Acceleration", IntakeConstants.ACTUATOR_ACCELERATION);
+
     //private LiveNumber intakeP = new LiveNumber("Intake kP", IntakeConstants.INTAKE_KP);
     //private LiveNumber intakeFF = new LiveNumber("Intake kF", IntakeConstants.INTAKE_KF);
 
@@ -124,6 +127,7 @@ public class Intake extends SubsystemBase{
 
     public void logData(){
         Logger.getInstance().recordOutput("Intake/Actuator Position", getPosition());
+        Logger.getInstance().recordOutput("Intake/Actuator Velocity", actuatorMotor.getSelectedSensorVelocity());
         Logger.getInstance().recordOutput("Intake/Intake Speed", getRPM());
     }
 
@@ -140,6 +144,9 @@ public class Intake extends SubsystemBase{
         //actuatorMotor.getPIDController().setD(actuatorD.get());
         actuatorMotor.config_kP(0, actuatorP.get());
         actuatorMotor.config_kD(0, actuatorD.get());
+
+        actuatorMotor.configMotionCruiseVelocity(actuatorVelocity.get());
+        actuatorMotor.configMotionAcceleration(actuatorAcceleration.get());
 
         //intakeMotor.config_kP(0, intakeP.get());
         //intakeMotor.config_kF(0, intakeFF.get());
@@ -172,4 +179,3 @@ public class Intake extends SubsystemBase{
     }
 
 }
-    
