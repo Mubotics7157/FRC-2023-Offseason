@@ -117,6 +117,7 @@ public class RobotContainer {
 
     m_driverController.y().onTrue(new InstantCommand(() -> turret.setState(TurretState.DYNAMIC)));
     m_driverController.y().onFalse(new InstantCommand(() -> turret.setState(TurretState.OFF)));
+    //made a change!
     //m_operatorController.button(1).onTrue(new InstantCommand(() -> intake.setState(IntakeState.CUSTOM)));
     //m_operatorController.button(1).onFalse(new InstantCommand(() -> intake.setState(IntakeState.OFF)));
 
