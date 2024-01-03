@@ -12,8 +12,10 @@ import frc.robot.util.LiveNumber;
 public class ShooterManager extends SubsystemBase{
     
     public enum ShooterManagerState{
+        OFF,
         AUTO,
         CUSTOM,
+        SETPOINT,
         STOW,
         ZERO
     }
@@ -26,9 +28,9 @@ public class ShooterManager extends SubsystemBase{
 
     private ShooterManagerState currentState = ShooterManagerState.AUTO;
 
-    private LiveNumber customHood = new LiveNumber("Custom Hood", 0); //degrees
-    private LiveNumber customShooter = new LiveNumber("Custom Shooter", 0); //degrees
-    private LiveNumber customTurret = new LiveNumber("Custom Turret", 0); //rpm
+    private LiveNumber customHood = new LiveNumber("Custom Hood", 0); //not degrees
+    private LiveNumber customShooter = new LiveNumber("Custom Shooter", 0); //rpm
+    private LiveNumber customTurret = new LiveNumber("Custom Turret", 0); //degrees
 
     public ShooterManager(){
 
@@ -49,6 +51,10 @@ public class ShooterManager extends SubsystemBase{
         currentState = wantedState;
 
         switch(currentState){
+            case OFF:
+                setStates(TurretState.OFF, HoodState.OFF, ShooterState.OFF);
+                break;
+
             case STOW:
                 setAll(Setpoints.TURRET_STOW, Setpoints.HOOD_STOW, 0);
             break; 
@@ -57,10 +63,15 @@ public class ShooterManager extends SubsystemBase{
                 setTracking();
                 break;
 
+            case SETPOINT:
+                setStates(TurretState.SETPOINT, HoodState.SETPOINT, ShooterState.SETPOINT);
+                break;
+            
+
             case CUSTOM:
                 setAll(
                     Rotation2d.fromDegrees(customTurret.get()),
-                    Rotation2d.fromDegrees(customHood.get()),
+                    customHood.get(),
                     customShooter.get());
                 break;
 
@@ -72,6 +83,12 @@ public class ShooterManager extends SubsystemBase{
 
     public ShooterManagerState getState(){
         return currentState;
+    }
+
+    public void configGains(){
+        turret.configGains();
+        hood.configGains();
+        shooter.configGains();
     }
 
     public void zeroAll(){
@@ -106,7 +123,7 @@ public class ShooterManager extends SubsystemBase{
         );
     }
 
-    public void setAll(Rotation2d turretAng, Rotation2d hoodAng, double shooterSpeed){
+    public void setAll(Rotation2d turretAng, double hoodAng, double shooterSpeed){
         if(turret.getState() != TurretState.SETPOINT)
             turret.setState(TurretState.SETPOINT);
 

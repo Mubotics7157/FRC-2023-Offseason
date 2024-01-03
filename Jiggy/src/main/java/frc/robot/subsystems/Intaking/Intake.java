@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
@@ -58,7 +59,7 @@ public class Intake extends SubsystemBase{
 
     @Override
     public void periodic() {
-        logData();
+        //logData();
         
         switch(intakeState){
             case OFF:
@@ -109,10 +110,10 @@ public class Intake extends SubsystemBase{
 
     private void setIntake(double rpm){
         intakeMotor.set(ControlMode.Velocity, rpm);
-        Logger.getInstance().recordOutput("Intake/Wanted Intake RPM", rpm);
+        //Logger.getInstance().recordOutput("Intake/Wanted Intake RPM", rpm);
     }
 
-    public void setState(IntakeState newState){
+    public void setState(IntakeState newState){             
         if(intakeState != newState)
             intakeState = newState;
     }
@@ -175,6 +176,9 @@ public class Intake extends SubsystemBase{
 
         actuatorMotor.config_kP(0, IntakeConstants.ACTUATOR_KP);
         actuatorMotor.config_kD(0, IntakeConstants.ACTUATOR_KD);
+
+        intakeMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 50);
+        actuatorMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 50);
         
     }
 

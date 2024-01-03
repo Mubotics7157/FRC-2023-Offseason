@@ -1,5 +1,7 @@
 package frc.robot.subsystems.Shooting;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -14,6 +16,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -58,7 +61,7 @@ public class Turret extends SubsystemBase{
     public Turret(){
         configMotor();
 
-        rotationController.setTolerance(1);
+        rotationController.setTolerance(0.2);
         rotationController.setSetpoint(0);
     }
 
@@ -68,6 +71,7 @@ public class Turret extends SubsystemBase{
 
     @Override
     public void periodic() {
+        logData();
         
         switch(turretState){
             case OFF:
@@ -97,8 +101,12 @@ public class Turret extends SubsystemBase{
     }
 
     public void logData(){
-        SmartDashboard.putNumber("shooter actual position", getAngle().getDegrees());
-        SmartDashboard.putNumber("shooter wanted position", currentSetpoint.getDegrees());
+        //SmartDashboard.putNumber("shooter actual position", getAngle().getDegrees());
+        //SmartDashboard.putNumber("shooter wanted position", currentSetpoint.getDegrees());
+        Logger.getInstance().recordOutput("Turret/State", getState().toString());
+        Logger.getInstance().recordOutput("Turret/Tracking Error", rotationController.getPositionError());
+        Logger.getInstance().recordOutput("Turret/Position", getAngle().getDegrees());
+        Logger.getInstance().recordOutput("Turret/Mag Sensor", limSwitch.get());
     }
 
     public void goToSetpoint(){
@@ -137,10 +145,15 @@ public class Turret extends SubsystemBase{
     }
 
     public void zeroRoutine(){
-        if(!limSwitch.get()) //if the switch hasnt been hit
-            turretMotor.set(0.1);
+        if(limSwitch.get() != TurretConstants.MAG_DETECTED){ //if the switch hasnt been hit
+            turretMotor.configForwardSoftLimitEnable(false);
+            turretMotor.configReverseSoftLimitEnable(false);
+            turretMotor.set(-0.1);
+        }
 
         else{   //if the switch has been hit
+            turretMotor.configForwardSoftLimitEnable(true);
+            turretMotor.configReverseSoftLimitEnable(true);
             turretMotor.set(0);
             zeroEncoder();
         } 
@@ -167,7 +180,7 @@ public class Turret extends SubsystemBase{
 
     public void trackTarget(){
         if(turretLL.hasTargets())
-            jog(rotationController.calculate(turretLL.getTargetYaw().getDegrees()));
+            jog(-rotationController.calculate(turretLL.getTargetYaw().getDegrees()));
         else
             jog(0);
     }
@@ -200,6 +213,12 @@ public class Turret extends SubsystemBase{
         turretMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 40, 40, 0.1));
         turretMotor.configVoltageCompSaturation(12);
         turretMotor.enableVoltageCompensation(true);
+       
+        turretMotor.configForwardSoftLimitThreshold(Units.degreesToRotations(200) * 2048 * TurretConstants.TURRET_GEARING);
+        turretMotor.configReverseSoftLimitThreshold(0);
+
+        turretMotor.configForwardSoftLimitEnable(true);
+        turretMotor.configReverseSoftLimitEnable(true);
 
         turretMotor.config_kP(0, TurretConstants.TURRET_KP);
 

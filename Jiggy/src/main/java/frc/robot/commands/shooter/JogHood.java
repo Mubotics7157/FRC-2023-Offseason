@@ -28,7 +28,7 @@ public class JogHood extends CommandBase{
     @Override
     public void execute() {
         if(Math.abs(axis.getAsDouble()) > 0.1)
-            hood.setJog(-axis.getAsDouble() / 2);
+            hood.setJog(axis.getAsDouble() / 2);
         else
             hood.setJog(0);
     }

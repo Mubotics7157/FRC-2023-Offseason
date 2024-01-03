@@ -32,7 +32,7 @@ public class IntakeManager extends SubsystemBase{
         
         switch(currentState){
             case OFF:
-                intake.setState(IntakeState.STOW);
+                intake.setState(IntakeState.OFF);
                 spindexer.setState(SpindexerState.OFF);
                 break;
 
@@ -55,6 +55,10 @@ public class IntakeManager extends SubsystemBase{
                 spindexer.setState(SpindexerState.IDLE);
                 break;
         }
+    }
+
+    public void configGains(){
+        intake.configGains();
     }
 
     public IntakeManagerState getState(){

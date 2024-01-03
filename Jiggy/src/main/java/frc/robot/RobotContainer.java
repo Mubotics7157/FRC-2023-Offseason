@@ -29,6 +29,7 @@ import frc.robot.subsystems.Shooting.Shooter;
 import frc.robot.subsystems.Shooting.ShooterManager;
 import frc.robot.subsystems.Shooting.Turret;
 import frc.robot.subsystems.Shooting.Hood.HoodState;
+import frc.robot.subsystems.Shooting.ShooterManager.ShooterManagerState;
 import frc.robot.subsystems.Shooting.Turret.TurretState;
 
 import java.time.Instant;
@@ -77,7 +78,7 @@ public class RobotContainer {
 
     //drive.setDefaultCommand(new DriveArcade(m_driverController::getLeftY, m_driverController::getRightX, true, drive));
     drive.setDefaultCommand(new DriveTank(m_driverController::getRightY, m_driverController::getLeftY, true, drive));
-    shooter.setDefaultCommand(new JogShooter(() -> (m_operatorController.getRawAxis(3) / 2) - 0.5, shooter));
+    //shooter.setDefaultCommand(new JogShooter(() -> (m_operatorController.getRawAxis(3) / 2) - 0.5, shooter));
     //turret.setDefaultCommand(new JogTurret(m_driverController::getLeftX, turret));
     //hood.setDefaultCommand(new JogHood(m_driverController::getRightY, hood));
   }
@@ -95,22 +96,29 @@ public class RobotContainer {
     m_driverController.povLeft().whileTrue(new JogTurret(() -> -0.75, turret));
     m_driverController.povRight().whileTrue(new JogTurret(() -> 0.75, turret));
 
-    m_driverController.povUp().whileTrue(new JogHood(() -> -0.3, hood));
-    m_driverController.povDown().whileTrue(new JogHood(() -> 0.3, hood));
+    m_driverController.povUp().whileTrue(new JogHood(() -> 0.3, hood));
+    m_driverController.povDown().whileTrue(new JogHood(() -> -0.3, hood));
 
     m_driverController.a().onTrue(new ParallelCommandGroup(new InstantCommand(() -> throat.setState(ThroatState.SHOOTING))));
     m_driverController.a().onFalse(new ParallelCommandGroup(new InstantCommand(() -> throat.setState(ThroatState.OFF))));
 
     m_driverController.b().onTrue(new InstantCommand(() -> spindexer.setState(SpindexerState.INTAKING)));
     m_driverController.b().onFalse(new InstantCommand(() -> spindexer.setState(SpindexerState.OFF)));
+    
+    m_driverController.x().onTrue(new ParallelCommandGroup(new InstantCommand(() -> shooterManager.setState(ShooterManagerState.CUSTOM))));
+    m_driverController.x().onFalse(new InstantCommand(() -> shooterManager.setState(ShooterManagerState.OFF)));
 
-    m_operatorController.button(7).onTrue(new InstantCommand(intake::configGains));
-    //m_operatorController.button(3).onTrue(new InstantCommand(intake::zeroEncoder));
+    m_operatorController.button(9).onTrue(new InstantCommand(() -> shooterManager.setState(ShooterManagerState.ZERO)));
+
+    m_operatorController.button(7).onTrue(new ParallelCommandGroup(new InstantCommand(() -> shooterManager.configGains()), new InstantCommand(() -> intakeManager.configGains())));
 
     m_driverController.leftTrigger().onTrue(new InstantCommand(() -> intakeManager.setState(IntakeManagerState.INTAKING)));
-    m_driverController.leftTrigger().onFalse(new InstantCommand(() -> intakeManager.setState(IntakeManagerState.OFF)));
-    m_operatorController.button(1).onTrue(new InstantCommand(() -> intake.setState(IntakeState.CUSTOM)));
-    m_operatorController.button(1).onFalse(new InstantCommand(() -> intake.setState(IntakeState.OFF)));
+    m_driverController.leftTrigger().onFalse(new InstantCommand(() -> intakeManager.setState(IntakeManagerState.STOW)));
+
+    m_driverController.y().onTrue(new InstantCommand(() -> turret.setState(TurretState.DYNAMIC)));
+    m_driverController.y().onFalse(new InstantCommand(() -> turret.setState(TurretState.OFF)));
+    //m_operatorController.button(1).onTrue(new InstantCommand(() -> intake.setState(IntakeState.CUSTOM)));
+    //m_operatorController.button(1).onFalse(new InstantCommand(() -> intake.setState(IntakeState.OFF)));
 
     //m_operatorController.button(4).onTrue(new InstantCommand(() -> intake.setState(IntakeState.DOWN)));
     //m_operatorController.button(4).onFalse(new InstantCommand(() -> intake.setState(IntakeState.STOW)));

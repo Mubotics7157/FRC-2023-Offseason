@@ -16,7 +16,7 @@ public class Limelight {
 
     public Limelight(String name){
         this.name = name; 
-        tableLime = NetworkTableInstance.getDefault().getTable(name);
+        tableLime = NetworkTableInstance.getDefault().getTable("limelight-" + name);
     }
 
     public boolean hasTargets(){

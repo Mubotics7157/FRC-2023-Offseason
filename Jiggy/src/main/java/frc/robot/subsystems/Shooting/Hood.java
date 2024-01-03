@@ -9,7 +9,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkMax.SoftLimitDirection;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.InterpolatingTreeMap;
@@ -35,7 +37,7 @@ public class Hood extends SubsystemBase{
     private static Hood instance = new Hood();
 
     private CANSparkMax hoodMotor = new CANSparkMax(HoodConstants.DEVICE_ID_HOOD, MotorType.kBrushless);
-    private Rotation2d currentSetpoint = new Rotation2d();
+    private double currentSetpoint = 0;
     public double jogVal = 0;
     private HoodState hoodState = HoodState.SETPOINT;
 
@@ -83,12 +85,13 @@ public class Hood extends SubsystemBase{
     }
 
     private void logData(){
-        Logger.getInstance().recordOutput("Hood/Position", getAngle().getDegrees());
+        Logger.getInstance().recordOutput("Hood/Position", getAngle());
         Logger.getInstance().recordOutput("Hood/At Setpoint", atSetpoint());
+        Logger.getInstance().recordOutput("Hood/Mag sensor", limSwitch.get());
     }
 
     private void goToSetpoint(){
-        hoodMotor.getPIDController().setReference(currentSetpoint.getRotations() * HoodConstants.HOOD_GEARING, ControlType.kPosition);
+        hoodMotor.getPIDController().setReference(currentSetpoint, ControlType.kPosition);
     }
 
     public void jog(double value){
@@ -99,16 +102,16 @@ public class Hood extends SubsystemBase{
         jogVal = value;
     }
 
-    public void setSetpoint(Rotation2d wantedSetpoint){
+    public void setSetpoint(double wantedSetpoint){
         currentSetpoint = wantedSetpoint;
     }
 
-    public Rotation2d getAngle(){
-        return Rotation2d.fromRotations(hoodMotor.getEncoder().getPosition() * HoodConstants.HOOD_GEARING);
+    public double getAngle(){
+        return hoodMotor.getEncoder().getPosition();
     }
 
     public boolean atSetpoint(){
-        return Math.abs(getAngle().getDegrees() - currentSetpoint.getDegrees()) < 2;
+        return Math.abs(getAngle() - currentSetpoint) < 2;
     }
 
     public void trackTarget(){
@@ -120,10 +123,15 @@ public class Hood extends SubsystemBase{
 
     public void zeroRoutine(){
 
-        if(!limSwitch.get()) //if switch is not hit
-            jog(0.1);
+        if(limSwitch.get() != HoodConstants.MAG_DETECTED){ //if switch is not hit
+            hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, false);
+            hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
+            jog(-0.1);
+        }
 
         else{ //if the switch is hit
+            hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+            hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
             jog(0);
             hoodMotor.getEncoder().setPosition(0);
         }
@@ -154,7 +162,13 @@ public class Hood extends SubsystemBase{
 
         hoodMotor.setSmartCurrentLimit(20, 35);
         hoodMotor.enableVoltageCompensation(12);
-        
+
+        hoodMotor.setSoftLimit(SoftLimitDirection.kForward, (float)10.5);
+        hoodMotor.setSoftLimit(SoftLimitDirection.kReverse, (float)0.5);
+
+        hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+        hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+
         hoodMotor.getPIDController().setP(HoodConstants.HOOD_KP);
     }
     

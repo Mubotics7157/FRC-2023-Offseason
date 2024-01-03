@@ -83,10 +83,11 @@ public class Shooter extends SubsystemBase{
 
     public void logData(){
         Logger.getInstance().recordOutput("Shooter/RPM", getRPM());
+        Logger.getInstance().recordOutput("Shooter/State", getState().toString());
     }
 
     public void goToSetpoint(){
-        shooterMaster.getPIDController().setReference(currentSetpoint * ShooterConstants.SHOOTER_GEARING, ControlType.kVelocity);
+        shooterMaster.getPIDController().setReference(currentSetpoint, ControlType.kVelocity);
     }
     
     public void trackTarget(){
@@ -138,7 +139,7 @@ public class Shooter extends SubsystemBase{
         shooterMaster.setIdleMode(IdleMode.kCoast);
         shooterSlave.setIdleMode(IdleMode.kCoast);
 
-        shooterMaster.setInverted(true);
+        shooterMaster.setInverted(false);
 
         shooterSlave.follow(shooterMaster, true);
 

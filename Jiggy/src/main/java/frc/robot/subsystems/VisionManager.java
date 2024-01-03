@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.VisionConstants;
@@ -52,7 +53,11 @@ public class VisionManager extends SubsystemBase{
     public void logData(){
         //SmartDashboard.putNumber("limelight Pitch", turretLL.getTargetPitch().getDegrees());
         //SmartDashboard.putNumber("limelight Yaw", turretLL.getTargetYaw().getDegrees());
-        Logger.getInstance().recordOutput("Limelight/Calculated Distance", getDistanceToTarget());
+        Logger.getInstance().recordOutput("Limelight/Calculated Distance", Units.metersToInches(getDistanceToTarget()));
         Logger.getInstance().recordOutput("Limelight/Has Targets", turretLL.hasTargets());
+
+        if(hasTargets()){
+            Logger.getInstance().recordOutput("Limelight/Target Yaw", turretLL.getTargetYaw().getDegrees());
+        }
     }
 }

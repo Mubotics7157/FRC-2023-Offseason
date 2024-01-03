@@ -30,12 +30,12 @@ public final class Constants {
 
   public static class DriveConstants{
 
-    public static final double driveKS = 0.14721;//0.093307;//0.12711;
-    public static final double driveKV = 1.7561;//0.87933;//1.7819;
-    public static final double driveKA = 0.1356;//0.069662;//0.17246;
+    public static final double driveKS = 0.14414;//0.14721;//0.093307;//0.12711;
+    public static final double driveKV = 1.7697;//1.7561;//0.87933;//1.7819;
+    public static final double driveKA = 0.70828;//0.1356;//0.069662;//0.17246;
     //public static final double driveKP = 0.034004;
 
-    public static final double driveKP = 0.019307;//0.0050532;//0.003;
+    public static final double driveKP = 0.18096;//0.019307;//0.0050532;//0.003;
     public static final double driveKF = 0.0468;
 
 
@@ -71,31 +71,31 @@ public final class Constants {
 
     public static final int DEVICE_ID_HOOD = 21;
 
-    public static final double HOOD_KP = 0.075;
+    public static final double HOOD_KP = 0.22;
 
     public static final int HOOD_GEARING = 15;
     //this isnt the actual gearing rotation its just to make the units smaller for easier reading
 
-    public static final int DEVICE_ID_LIMIT_SWITCH = 2;
-    public static final boolean MAG_DETECTED = true;
+    public static final int DEVICE_ID_LIMIT_SWITCH = 1;
+    public static final boolean MAG_DETECTED = false;
   }
 
   public static class TurretConstants{
 
     public static final int DEVICE_ID_TURRET = 16;
 
-    public static final double TRACKING_KP = 0;
+    public static final double TRACKING_KP = 0.03;
     public static final double TRACKING_KI = 0;
     public static final double TRACKING_KD = 0;
 
-    public static final double TURRET_KP = 0.075;
+    public static final double TURRET_KP = 0.03;
 
     public static final double TURRET_GEARING = 210;
 
     public static final Rotation2d TURRET_MAX = Rotation2d.fromDegrees(270);
 
-    public static final int DEVICE_ID_LIMIT_SWITCH = 1;
-    public static final boolean MAG_DETECTED = true;
+    public static final int DEVICE_ID_LIMIT_SWITCH = 0;
+    public static final boolean MAG_DETECTED = false;
   }
 
   public static class ShooterConstants{
@@ -103,11 +103,8 @@ public final class Constants {
     public static final int DEVICE_ID_SHOOTER_MASTER = 19;
     public static final int DEVICE_ID_SHOOT_SLAVE = 20;
 
-    public static final double SHOOTER_GEARING = 5;
-
-    public static final double SHOOTER_KP = 0.04;
-
-    public static final double SHOOTER_KF = 0.00012;
+    public static final double SHOOTER_KP = 0.00001;
+    public static final double SHOOTER_KF = 0.00019;
     
   }
 
@@ -122,7 +119,7 @@ public final class Constants {
 
     public static final double SPINDEXER_RAMP_RATE = 4;
 
-    public static final double IDLE_SPEED = 1000;
+    public static final double IDLE_SPEED = 0.1;
     public static final double INTAKING_SPEED = 3000;
     public static final double SHOOTING_SPEED = 2000;
   }
@@ -134,10 +131,10 @@ public final class Constants {
     public static final double ACTUATOR_GEAR_RATIO = 8;
 
     public static final double ACTUATOR_STOW = -7000;
-    public static final double ACTUATOR_DOWN = -2900;
+    public static final double ACTUATOR_DOWN = -100;
 
-    public static final double ACTUATOR_ACCELERATION = 1000;
-    public static final double ACTUATOR_CRUISE_VELOCITY = 1000;
+    public static final double ACTUATOR_ACCELERATION = 50000;
+    public static final double ACTUATOR_CRUISE_VELOCITY = 50000;
 
     public static final double ACTUATOR_KP = 0.05;
     public static final double ACTUATOR_KD = 0;
@@ -156,8 +153,8 @@ public final class Constants {
   }
 
   public static class Setpoints{
-    public static final Rotation2d HOOD_STOW = Rotation2d.fromDegrees(0);
-    public static final Rotation2d TURRET_STOW = Rotation2d.fromDegrees(90);
+    public static final double HOOD_STOW = 0;
+    public static final Rotation2d TURRET_STOW = Rotation2d.fromDegrees(180);
   }
 
   public static class VisionConstants{
@@ -165,9 +162,9 @@ public final class Constants {
 
     public static final double TURRET_LL_HEIGHT_METERS = Units.inchesToMeters(23.359);
     
-    public static final double TARGET_HEIGHT_METERS = 4; //change this for reality
+    public static final double TARGET_HEIGHT_METERS = Units.feetToMeters(6); //change this for reality
 
-    public static final double TURRET_LL_MOUNTING_PITCH_RADIANS = Units.degreesToRadians(60);
+    public static final double TURRET_LL_MOUNTING_PITCH_RADIANS = Units.degreesToRadians(30);
   }
 
 }

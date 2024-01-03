@@ -63,8 +63,8 @@ public class ShotGenerator {
         return new ShooterSetpoint(rpm, hood);
     }
 
-    public Rotation2d getInterpolatedHood(double distance){
-        return Rotation2d.fromDegrees(hoodInterpolator.interpolate(distance));
+    public double getInterpolatedHood(double distance){
+        return hoodInterpolator.interpolate(distance);
     }
 
     public double getInterpolatedShooter(double distance){

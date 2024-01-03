@@ -2,6 +2,7 @@ package frc.robot.subsystems.Intaking;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
@@ -67,7 +68,7 @@ public class Spindexer extends SubsystemBase{
             
             case INTAKING:
                 //spin(SpindexerConstants.INTAKING_SPEED);
-                spin(0.25);
+                spin(0.15);
                 break;
             
             case SHOOTING:
@@ -102,15 +103,17 @@ public class Spindexer extends SubsystemBase{
         //spindexerMotor.config_kD(0, spindexerD.get());
         //spindexerMotor.config_kF(0, spindexerF.get());
 
-        spindexerMotor.configOpenloopRamp(rampRate.get());
+        //spindexerMotor.configOpenloopRamp(rampRate.get());
     }
 
     public void configMotors(){
         spindexerMotor.configFactoryDefault();
 
-        spindexerMotor.setInverted(false);
+        spindexerMotor.setInverted(true);
 
         spindexerMotor.setNeutralMode(NeutralMode.Coast);
+
+        spindexerMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 50);
 
         //spindexerMotor.configOpenloopRamp(SpindexerConstants.SPINDEXER_RAMP_RATE);
 
