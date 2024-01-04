@@ -69,7 +69,7 @@ public class ShotGenerator {
 
     public void initMaps(){
         Double[] distances = new Double[]{
-            Double.valueOf(0), //1
+            Double.valueOf(2.3), //1
             Double.valueOf(1), //2
             Double.valueOf(2), //2
             Double.valueOf(3), //3
@@ -77,9 +77,8 @@ public class ShotGenerator {
         };
 
         //distance (meters), speed
-        for(Double distance : distances){
-            shooterLerp.put(distance, null);
-            hoodLerp.put(distance, null);
-        }
+        //3000, 10 (2.3)
+        //3000, 8 (2.9)
+        shooterLerp.put(distances[0], Double.valueOf(3000));
     }
 }

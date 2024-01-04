@@ -65,7 +65,7 @@ public class Spindexer extends SubsystemBase{
                 break;
             
             case IDLE:
-                spin(SpindexerConstants.IDLE_SPEED);
+                spin(0.2);
                 break;
             
             case INTAKING:
@@ -74,7 +74,7 @@ public class Spindexer extends SubsystemBase{
                 break;
             
             case SHOOTING:
-                spin(0.4);
+                spin(0.2);
                 break;
 
             case CUSTOM:
