@@ -11,24 +11,25 @@ import frc.robot.subsystems.Shooting.Turret.TurretState;
 
 public class EnableTracking extends CommandBase{
     private ShooterManager shooterManager;
+    private Turret turret;
 
-    public EnableTracking(ShooterManager shooterManager){
-        this.shooterManager = shooterManager;
+    public EnableTracking(Turret turret){
+        this.turret = turret;
 
-        //addRequirements(shooterManager);
+        addRequirements(turret);
     }
 
     @Override
     public void initialize() {
         VisionManager.getInstance().setLeds(true);
-        Turret.getInstance().setState(TurretState.DYNAMIC);
+        turret.setState(TurretState.DYNAMIC);
         //shooterManager.setState(ShooterManagerState.AUTO);
     }
 
     @Override
     public void end(boolean interrupted) {
         VisionManager.getInstance().setLeds(false);
-        Turret.getInstance().setState(TurretState.OFF);
+        turret.setState(TurretState.OFF);
         //shooterManager.setState(ShooterManagerState.STOW);
     }
 }

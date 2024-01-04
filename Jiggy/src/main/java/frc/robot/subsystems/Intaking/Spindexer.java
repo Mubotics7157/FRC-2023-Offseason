@@ -1,7 +1,11 @@
 package frc.robot.subsystems.Intaking;
 
+
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
@@ -104,6 +108,10 @@ public class Spindexer extends SubsystemBase{
         return spindexerState;
     }
 
+    public void logData(){
+        Logger.getInstance().recordOutput("Spindexer/Amps", spindexerMotor.getStatorCurrent());
+    }
+
     public void configGains(){
         //spindexerMotor.config_kP(0, spindexerP.get());
         //spindexerMotor.config_kD(0, spindexerD.get());
@@ -120,6 +128,8 @@ public class Spindexer extends SubsystemBase{
         spindexerMotor.setNeutralMode(NeutralMode.Coast);
 
         spindexerMotor.setStatusFramePeriod(StatusFrame.Status_1_General, 50);
+
+        spindexerMotor.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, 20, 20, 0.1));
 
         //spindexerMotor.configOpenloopRamp(SpindexerConstants.SPINDEXER_RAMP_RATE);
 

@@ -52,7 +52,7 @@ public class IntakeManager extends SubsystemBase{
 
             case STOW:
                 intake.setState(IntakeState.STOW);
-                spindexer.setState(SpindexerState.IDLE);
+                spindexer.setState(SpindexerState.OFF);
                 break;
         }
     }

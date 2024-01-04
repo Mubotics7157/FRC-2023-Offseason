@@ -18,6 +18,7 @@ import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -51,6 +52,8 @@ public class Drive extends SubsystemBase{
 
     private LiveNumber driveP = new LiveNumber("drive kP", DriveConstants.driveKP);
 
+    private SlewRateLimiter leftLimiter = new SlewRateLimiter(3, -3, 0);
+    private SlewRateLimiter rightLimiter = new SlewRateLimiter(3, -3, 0);
     public Drive(){
         gyro.reset();
 
@@ -97,6 +100,7 @@ public class Drive extends SubsystemBase{
     }
     
     public void setSpeeds(double leftMPS, double rightMPS){
+
         double leftSpeed = CommonConversions.metersPerSecToStepsPerDecisec(leftMPS, DriveConstants.WHEEL_DIAMETER_METERS);
         double rightSpeed = CommonConversions.metersPerSecToStepsPerDecisec(rightMPS, DriveConstants.WHEEL_DIAMETER_METERS);
 

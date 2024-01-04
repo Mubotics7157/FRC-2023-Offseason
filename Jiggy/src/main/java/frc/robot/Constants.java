@@ -131,7 +131,7 @@ public final class Constants {
     public static final double ACTUATOR_GEAR_RATIO = 8;
 
     public static final double ACTUATOR_STOW = -7600;
-    public static final double ACTUATOR_DOWN = -1500;
+    public static final double ACTUATOR_DOWN = -500;
 
     public static final double ACTUATOR_ACCELERATION = 50000;
     public static final double ACTUATOR_CRUISE_VELOCITY = 50000;

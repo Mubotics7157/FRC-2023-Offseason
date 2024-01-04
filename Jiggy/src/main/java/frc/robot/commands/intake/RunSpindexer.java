@@ -22,12 +22,16 @@ public class RunSpindexer extends CommandBase{
     @Override
     public void initialize() {
         Spindexer.getInstance().setInverted(turn);
-        intakeManager.setState(IntakeManagerState.SHOOTING);
+
+        if(intakeManager.getState() != IntakeManagerState.SHOOTING)
+            intakeManager.setState(IntakeManagerState.SHOOTING);
+        else
+            intakeManager.setState(IntakeManagerState.STOW);
     }
 
     @Override
     public void end(boolean interrupted) {
-        intakeManager.setState(IntakeManagerState.STOW);
+        //intakeManager.setState(IntakeManagerState.STOW);
     }
 
 

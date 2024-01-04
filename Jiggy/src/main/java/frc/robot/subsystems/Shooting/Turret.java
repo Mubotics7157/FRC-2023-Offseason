@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Tracker;
 import frc.robot.subsystems.VisionManager;
 import frc.robot.util.CommonConversions;
 import frc.robot.util.Limelight;
@@ -35,6 +36,7 @@ public class Turret extends SubsystemBase{
         SETPOINT,
         FIELD_ORIENTED,
         DYNAMIC,
+        FINDING,
         ZERO
     }
     private static Turret instance = new Turret();
@@ -94,6 +96,10 @@ public class Turret extends SubsystemBase{
                 trackTarget();
                 break;
 
+            case FINDING:
+                findTarget();
+                break;
+
             case ZERO:
                 zeroRoutine();
                 break;
@@ -107,6 +113,7 @@ public class Turret extends SubsystemBase{
         Logger.getInstance().recordOutput("Turret/Tracking Error", rotationController.getPositionError());
         Logger.getInstance().recordOutput("Turret/Position Actual", getAngle().getDegrees());
         Logger.getInstance().recordOutput("Turret/Mag Sensor", limSwitch.get());
+        Logger.getInstance().recordOutput("Turret/State", getState().toString());
     }
 
     public void goToSetpoint(){
@@ -126,15 +133,30 @@ public class Turret extends SubsystemBase{
         currentSetpoint = wantedSetpoint;
     }
 
+    public void SetFieldOrientedSetpoint(Rotation2d wantedSetpoint){
+        fieldOrientedSetpoint = wantedSetpoint;
+    }
+
     public Rotation2d getAngle(){
         return Rotation2d.fromRotations((turretMotor.getSelectedSensorPosition() / 2048) / TurretConstants.TURRET_GEARING);
     }
 
+    public void findTarget(){
+        if(!turretLL.hasTargets())
+            goToPositionFieldOriented();
+        else
+            trackTarget();
+    }
+
     public void goToPositionFieldOriented(){
-        Rotation2d angleToGoTo = fieldOrientedSetpoint.minus(Drive.getInstance().getHeading());
+        Rotation2d angleToGoTo = fieldOrientedSetpoint.plus(Tracker.getInstance().getPose().getRotation());
 
         setSetpoint(angleToGoTo);
-        goToSetpoint();
+
+        if(Math.abs(angleToGoTo.getDegrees()) < 125)
+            goToSetpoint();
+        else
+            jog(0);
     }
 
     public TurretState getState(){
@@ -142,6 +164,11 @@ public class Turret extends SubsystemBase{
     }
 
     public void setState(TurretState state){
+        if(state == TurretState.FINDING || state == TurretState.DYNAMIC)
+            VisionManager.getInstance().setLeds(true);
+        else
+            VisionManager.getInstance().setLeds(false);
+            
         turretState = state;
     }
 

@@ -45,9 +45,9 @@ public class DriveArcade extends CommandBase{
 
     public void arcadeDrive(double fwd, double turn){
         DifferentialDriveWheelSpeeds wheelSpeeds = DriveConstants.DRIVE_KINEMATICS.toWheelSpeeds(new ChassisSpeeds(
-            -Mutil.modifyInputs(fwd, drive.getDriveFactor()),
+            -Mutil.squareInputs(fwd, drive.getDriveFactor()),
             0.0,
-            -Mutil.modifyInputs(turn, drive.getTurnFactor())));
+            -Mutil.squareInputs(turn, drive.getTurnFactor())));
 
         drive.setSpeeds(wheelSpeeds);
     }

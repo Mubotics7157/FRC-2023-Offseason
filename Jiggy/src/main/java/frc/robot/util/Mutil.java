@@ -40,5 +40,13 @@ public final class Mutil {
         }
         return val * factor;
     
-}
+    }
+
+    public static double squareInputs(double val, double factor){
+        if(Math.abs(val) < 0.1){
+            val = 0;
+        }
+        return Math.copySign(val * val, val) * factor;
+    
+    }
 }
