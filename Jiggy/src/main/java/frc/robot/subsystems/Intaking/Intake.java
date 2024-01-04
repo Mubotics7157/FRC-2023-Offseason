@@ -46,8 +46,8 @@ public class Intake extends SubsystemBase{
     private LiveNumber actuatorVelocity = new LiveNumber("Actuator Velocity", IntakeConstants.ACTUATOR_CRUISE_VELOCITY);
     private LiveNumber actuatorAcceleration = new LiveNumber("Actuator Acceleration", IntakeConstants.ACTUATOR_ACCELERATION);
 
-    //private LiveNumber intakeP = new LiveNumber("Intake kP", IntakeConstants.INTAKE_KP);
-    //private LiveNumber intakeFF = new LiveNumber("Intake kF", IntakeConstants.INTAKE_KF);
+    private LiveNumber intakeP = new LiveNumber("Intake kP", IntakeConstants.INTAKE_KP);
+    private LiveNumber intakeFF = new LiveNumber("Intake kF", IntakeConstants.INTAKE_KF);
 
     public Intake(){
         configMotors();
@@ -59,7 +59,7 @@ public class Intake extends SubsystemBase{
 
     @Override
     public void periodic() {
-        //logData();
+        logData();
         
         switch(intakeState){
             case OFF:
@@ -110,7 +110,7 @@ public class Intake extends SubsystemBase{
 
     private void setIntake(double rpm){
         intakeMotor.set(ControlMode.Velocity, rpm);
-        //Logger.getInstance().recordOutput("Intake/Wanted Intake RPM", rpm);
+        Logger.getInstance().recordOutput("Intake/Intake RPM Wanted", rpm);
     }
 
     public void setState(IntakeState newState){             
@@ -128,8 +128,7 @@ public class Intake extends SubsystemBase{
 
     public void logData(){
         Logger.getInstance().recordOutput("Intake/Actuator Position", getPosition());
-        Logger.getInstance().recordOutput("Intake/Actuator Velocity", actuatorMotor.getSelectedSensorVelocity());
-        Logger.getInstance().recordOutput("Intake/Intake Speed", getRPM());
+        Logger.getInstance().recordOutput("Intake/Intake RPM Actual", getRPM());
     }
 
     public double getPosition(){
@@ -141,16 +140,14 @@ public class Intake extends SubsystemBase{
     }
 
     public void configGains(){
-        //actuatorMotor.getPIDController().setP(actuatorP.get());
-        //actuatorMotor.getPIDController().setD(actuatorD.get());
         actuatorMotor.config_kP(0, actuatorP.get());
         actuatorMotor.config_kD(0, actuatorD.get());
 
         actuatorMotor.configMotionCruiseVelocity(actuatorVelocity.get());
         actuatorMotor.configMotionAcceleration(actuatorAcceleration.get());
 
-        //intakeMotor.config_kP(0, intakeP.get());
-        //intakeMotor.config_kF(0, intakeFF.get());
+        intakeMotor.config_kP(0, intakeP.get());
+        intakeMotor.config_kF(0, intakeFF.get());
     }
 
     public void configMotors(){

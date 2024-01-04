@@ -35,7 +35,7 @@ public final class Mutil {
    */
 
    public static double modifyInputs(double val, double factor){
-        if(Math.abs(val) < 0.15){
+        if(Math.abs(val) < 0.1){
             val = 0;
         }
         return val * factor;

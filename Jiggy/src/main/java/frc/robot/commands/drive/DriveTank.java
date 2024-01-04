@@ -25,7 +25,8 @@ public class DriveTank extends CommandBase{
     
     @Override
     public void initialize() {
-        
+        drive.setTurnFactor(Math.PI);
+        drive.setDriveFactor(2);
     }
 
     @Override

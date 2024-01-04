@@ -29,7 +29,7 @@ public class Limelight {
 
     public void setLEDs(boolean on){
         if(on)
-            tableLime.getEntry("ledMode").setNumber(0);
+            tableLime.getEntry("ledMode").setNumber(3);
         else
             tableLime.getEntry("ledMode").setNumber(1);
 

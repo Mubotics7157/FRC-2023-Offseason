@@ -103,14 +103,15 @@ public class Turret extends SubsystemBase{
     public void logData(){
         //SmartDashboard.putNumber("shooter actual position", getAngle().getDegrees());
         //SmartDashboard.putNumber("shooter wanted position", currentSetpoint.getDegrees());
-        Logger.getInstance().recordOutput("Turret/State", getState().toString());
+        //Logger.getInstance().recordOutput("Turret/State", getState().toString());
         Logger.getInstance().recordOutput("Turret/Tracking Error", rotationController.getPositionError());
-        Logger.getInstance().recordOutput("Turret/Position", getAngle().getDegrees());
+        Logger.getInstance().recordOutput("Turret/Position Actual", getAngle().getDegrees());
         Logger.getInstance().recordOutput("Turret/Mag Sensor", limSwitch.get());
     }
 
     public void goToSetpoint(){
         turretMotor.set(ControlMode.Position, currentSetpoint.getRotations() * 2048 * TurretConstants.TURRET_GEARING);
+        Logger.getInstance().recordOutput("Turret/Position Wanted", currentSetpoint.getDegrees());
     }
 
     public void jog(double value){
@@ -148,13 +149,14 @@ public class Turret extends SubsystemBase{
         if(limSwitch.get() != TurretConstants.MAG_DETECTED){ //if the switch hasnt been hit
             turretMotor.configForwardSoftLimitEnable(false);
             turretMotor.configReverseSoftLimitEnable(false);
-            turretMotor.set(-0.1);
+            turretMotor.set(0.1);
         }
 
         else{   //if the switch has been hit
             turretMotor.configForwardSoftLimitEnable(true);
             turretMotor.configReverseSoftLimitEnable(true);
             turretMotor.set(0);
+            setState(TurretState.OFF);
             zeroEncoder();
         } 
     }
@@ -200,7 +202,8 @@ public class Turret extends SubsystemBase{
     }
 
     public void zeroEncoder(){
-        turretMotor.setSelectedSensorPosition(0);
+        turretMotor.setSelectedSensorPosition(Units.degreesToRotations(140) * 2048 * TurretConstants.TURRET_GEARING);
+        //turretMotor.setSelectedSensorPosition(0);
     }
 
     public void configMotor(){
@@ -214,8 +217,8 @@ public class Turret extends SubsystemBase{
         turretMotor.configVoltageCompSaturation(12);
         turretMotor.enableVoltageCompensation(true);
        
-        turretMotor.configForwardSoftLimitThreshold(Units.degreesToRotations(200) * 2048 * TurretConstants.TURRET_GEARING);
-        turretMotor.configReverseSoftLimitThreshold(0);
+        turretMotor.configReverseSoftLimitThreshold(-Units.degreesToRotations(125) * 2048 * TurretConstants.TURRET_GEARING);
+        turretMotor.configForwardSoftLimitThreshold(Units.degreesToRotations(125) * 2048 * TurretConstants.TURRET_GEARING);
 
         turretMotor.configForwardSoftLimitEnable(true);
         turretMotor.configReverseSoftLimitEnable(true);

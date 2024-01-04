@@ -60,4 +60,8 @@ public class VisionManager extends SubsystemBase{
             Logger.getInstance().recordOutput("Limelight/Target Yaw", turretLL.getTargetYaw().getDegrees());
         }
     }
+
+    public void setLeds(boolean on){
+        turretLL.setLEDs(on);
+    }
 }

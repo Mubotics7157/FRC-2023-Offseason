@@ -104,7 +104,7 @@ public class LimelightNT4 {
 
     public void setLEDS(boolean on){
         if(on)
-            ledMode.set(0);
+            ledMode.set(3);
         else   
             ledMode.set(1);
     }

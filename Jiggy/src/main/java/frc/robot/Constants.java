@@ -76,7 +76,7 @@ public final class Constants {
     public static final int HOOD_GEARING = 15;
     //this isnt the actual gearing rotation its just to make the units smaller for easier reading
 
-    public static final int DEVICE_ID_LIMIT_SWITCH = 1;
+    public static final int DEVICE_ID_LIMIT_SWITCH = 0;
     public static final boolean MAG_DETECTED = false;
   }
 
@@ -94,7 +94,7 @@ public final class Constants {
 
     public static final Rotation2d TURRET_MAX = Rotation2d.fromDegrees(270);
 
-    public static final int DEVICE_ID_LIMIT_SWITCH = 0;
+    public static final int DEVICE_ID_LIMIT_SWITCH = 1;
     public static final boolean MAG_DETECTED = false;
   }
 
@@ -130,8 +130,8 @@ public final class Constants {
 
     public static final double ACTUATOR_GEAR_RATIO = 8;
 
-    public static final double ACTUATOR_STOW = -7000;
-    public static final double ACTUATOR_DOWN = -100;
+    public static final double ACTUATOR_STOW = -7600;
+    public static final double ACTUATOR_DOWN = -1500;
 
     public static final double ACTUATOR_ACCELERATION = 50000;
     public static final double ACTUATOR_CRUISE_VELOCITY = 50000;
@@ -153,8 +153,8 @@ public final class Constants {
   }
 
   public static class Setpoints{
-    public static final double HOOD_STOW = 0;
-    public static final Rotation2d TURRET_STOW = Rotation2d.fromDegrees(180);
+    public static final double HOOD_STOW = 1;
+    public static final Rotation2d TURRET_STOW = Rotation2d.fromDegrees(0);
   }
 
   public static class VisionConstants{

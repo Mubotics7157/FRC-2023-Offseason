@@ -1,29 +1,19 @@
 package frc.robot.util.Shooting;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.util.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShotGenerator {
 
-    /* 
-    public class ShooterSpeed {
-
-        public final double topSpeed;
-        public final double bottomSpeed; 
-        public ShooterSpeed(double topSpeed, double bottomSpeed) { 
-          this.topSpeed = topSpeed; 
-          this.bottomSpeed = bottomSpeed;
-        } 
-    }
-    */
     private static ShotGenerator instance = new ShotGenerator();
 
     public static ShotGenerator getInstance(){
         return instance;
     }
-
     public class ShooterSetpoint{
 
         public final double shooterRPM;
@@ -35,7 +25,6 @@ public class ShotGenerator {
         }
     }
 
-    
     //log data as {shooter wheel rpm, distance it made it in}
     private Double[][] wheelRPM = {
         {1.81,2.2,2.41,2.92, 3.03,3.27}, //3.96 last
@@ -51,12 +40,15 @@ public class ShotGenerator {
     SplineInterpolator shooterInterpolator = SplineInterpolator.createMonotoneCubicSpline(Arrays.asList(wheelRPM[0]), Arrays.asList(wheelRPM[1]));
     SplineInterpolator hoodInterpolator = SplineInterpolator.createMonotoneCubicSpline(Arrays.asList(hoodAngle[0]), Arrays.asList(hoodAngle[1]));
 
-    public ShooterSetpoint getShot(double distance) {
-        //SplineInterpolator speedInterpolator = wheelInterpolator;
-        //SplineInterpolator spinInterpolator = hoodInterpolator;
+    InterpolatingTreeMap<Double, Double> shooterLerp = new InterpolatingTreeMap<>();
+    InterpolatingTreeMap<Double, Double> hoodLerp = new InterpolatingTreeMap<>();
 
-        double rpm = shooterInterpolator.interpolate(distance);
-        double hood = hoodInterpolator.interpolate(distance);
+    public ShooterSetpoint getShot(double distance) {
+        //double rpm = shooterInterpolator.interpolate(distance);
+        //double hood = hoodInterpolator.interpolate(distance);
+        double rpm  = shooterLerp.get(Double.valueOf(distance));
+        double hood = hoodLerp.get(Double.valueOf(distance));
+
         SmartDashboard.putNumber("interpolated shooter rpm", rpm);
         SmartDashboard.putNumber("interpolated hood angle", hood);
 
@@ -73,5 +65,21 @@ public class ShotGenerator {
 
     public ShooterSetpoint generateArbitraryShot(double rpm, double hood){
         return new ShooterSetpoint(rpm, hood);
+    }
+
+    public void initMaps(){
+        Double[] distances = new Double[]{
+            Double.valueOf(0), //1
+            Double.valueOf(1), //2
+            Double.valueOf(2), //2
+            Double.valueOf(3), //3
+            Double.valueOf(4), //4
+        };
+
+        //distance (meters), speed
+        for(Double distance : distances){
+            shooterLerp.put(distance, null);
+            hoodLerp.put(distance, null);
+        }
     }
 }

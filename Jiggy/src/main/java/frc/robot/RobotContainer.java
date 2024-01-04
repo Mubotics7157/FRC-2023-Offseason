@@ -16,6 +16,7 @@ import frc.robot.commands.shooter.JogTurret;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.PathHandler;
 import frc.robot.subsystems.Tracker;
+import frc.robot.subsystems.VisionManager;
 import frc.robot.subsystems.Intaking.Intake;
 import frc.robot.subsystems.Intaking.IntakeManager;
 import frc.robot.subsystems.Intaking.Spindexer;
@@ -51,15 +52,19 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
+  //drivetrain stuff
   private final Drive drive = Drive.getInstance();
   private final Tracker tracker = Tracker.getInstance();
   private final PathHandler handler = PathHandler.getInstance();
+  private final VisionManager visionManager = VisionManager.getInstance();
 
+  //intake stuff
   private final Intake intake = Intake.getInstance();
   private final Spindexer spindexer = Spindexer.getInstance();
   private final Throat throat = Throat.getInstance();
   private final IntakeManager intakeManager = IntakeManager.getInstance();
 
+  //shooter stuff
   private final Hood hood = Hood.getInstance();
   private final Shooter shooter = Shooter.getInstance();
   private final Turret turret = Turret.getInstance();
@@ -88,59 +93,55 @@ public class RobotContainer {
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
    * predicate, or via the named factories in {@link
    * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+   * CommandXboxControll]\[
+   * er Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
   private void configureBindings() {
+
+    //manual controls
     m_driverController.povLeft().whileTrue(new JogTurret(() -> -0.75, turret));
     m_driverController.povRight().whileTrue(new JogTurret(() -> 0.75, turret));
 
     m_driverController.povUp().whileTrue(new JogHood(() -> 0.3, hood));
     m_driverController.povDown().whileTrue(new JogHood(() -> -0.3, hood));
 
+
+    //runs throat
     m_driverController.a().onTrue(new ParallelCommandGroup(new InstantCommand(() -> throat.setState(ThroatState.SHOOTING))));
     m_driverController.a().onFalse(new ParallelCommandGroup(new InstantCommand(() -> throat.setState(ThroatState.OFF))));
 
-    m_driverController.b().onTrue(new InstantCommand(() -> spindexer.setState(SpindexerState.INTAKING)));
-    m_driverController.b().onFalse(new InstantCommand(() -> spindexer.setState(SpindexerState.OFF)));
-    
-    m_driverController.x().onTrue(new ParallelCommandGroup(new InstantCommand(() -> shooterManager.setState(ShooterManagerState.CUSTOM))));
-    m_driverController.x().onFalse(new InstantCommand(() -> shooterManager.setState(ShooterManagerState.OFF)));
 
+    //runs spindexer
+    m_driverController.rightBumper().onTrue(new ParallelCommandGroup(new InstantCommand(() -> spindexer.setInverted(true)) ,new InstantCommand(() -> spindexer.setState(SpindexerState.INTAKING))));
+    m_driverController.rightBumper().onFalse(new InstantCommand(() -> spindexer.setState(SpindexerState.OFF)));
+
+    m_driverController.leftBumper().onTrue(new ParallelCommandGroup(new InstantCommand(() -> spindexer.setInverted(false)) ,new InstantCommand(() -> spindexer.setState(SpindexerState.INTAKING))));
+    m_driverController.leftBumper().onFalse(new InstantCommand(() -> spindexer.setState(SpindexerState.OFF)));
+    
+    
+    //sets shooter assembly to custom setpoints from SmartDashboard
+    m_driverController.x().onTrue(new InstantCommand(() -> shooterManager.setState(ShooterManagerState.CUSTOM)));
+    m_driverController.x().onFalse(new InstantCommand(() -> shooterManager.setState(ShooterManagerState.STOW)));
+
+
+    //zeros hood and turret
     m_operatorController.button(9).onTrue(new InstantCommand(() -> shooterManager.setState(ShooterManagerState.ZERO)));
 
+
+    //configures the gains for all of intake and all of the shooter assembly
     m_operatorController.button(7).onTrue(new ParallelCommandGroup(new InstantCommand(() -> shooterManager.configGains()), new InstantCommand(() -> intakeManager.configGains())));
 
+
+    //drops the intake and runs the rollers + spindexer
     m_driverController.leftTrigger().onTrue(new InstantCommand(() -> intakeManager.setState(IntakeManagerState.INTAKING)));
     m_driverController.leftTrigger().onFalse(new InstantCommand(() -> intakeManager.setState(IntakeManagerState.STOW)));
 
-    m_driverController.y().onTrue(new InstantCommand(() -> turret.setState(TurretState.DYNAMIC)));
-    m_driverController.y().onFalse(new InstantCommand(() -> turret.setState(TurretState.OFF)));
-    //made a change!
-    //m_operatorController.button(1).onTrue(new InstantCommand(() -> intake.setState(IntakeState.CUSTOM)));
-    //m_operatorController.button(1).onFalse(new InstantCommand(() -> intake.setState(IntakeState.OFF)));
 
-    //m_operatorController.button(4).onTrue(new InstantCommand(() -> intake.setState(IntakeState.DOWN)));
-    //m_operatorController.button(4).onFalse(new InstantCommand(() -> intake.setState(IntakeState.STOW)));
-    //m_driverController.a().onTrue(new ParallelCommandGroup (new SetState<ThroatState>(throat::setState, ThroatState.SHOOTING), new SetState<SpindexerState>(spindexer::setState, SpindexerState.INTAKING)));
-    //m_driverController.a().onFalse(new ParallelCommandGroup(new SetState<ThroatState>(throat::setState, ThroatState.OFF), new SetState<SpindexerState>(spindexer::setState, SpindexerState.OFF)));
-    //m_operatorController.button(1).whileTrue(new JogShooter(() -> ((m_operatorController.getRawAxis(1) / 2) - 0.5), shooter));
-    //m_operatorController.button(2).whileTrue(new JogTurret(() -> m_operatorController.getRawAxis(0), turret));
-    //m_operatorController.button(3).whileTrue(new JogHood(() -> m_operatorController.getRawAxis(1), hood));
-    //m_driverController.leftTrigger().onTrue(new SequentialCommandGroup(new SetState<IntakeState>(intake::setState, IntakeState.CUSTOM), new InstantCommand(intake::configGains)));
-    //m_driverController.leftTrigger().onFalse(new SetState<IntakeState>(intake::setState, IntakeState.OFF));
-
-    //m_driverController.a().onTrue(new InstantCommand(intake::zeroEncoder));
-    //m_driverController.a().onTrue(new InstantCommand(tracker::resetPose));
-    //m_driverController.x().onTrue(new InstantCommand(drive::configGains));
-
-
-
-    //m_driverController.leftTrigger().whileTrue(new ChangeFactors(2, Math.PI, drive));
-    //m_driverController.b().onTrue(new InstantCommand(drive::resetEncoders));
-
-    //m_driverController.a().onTrue(new SetState<HoodState>(hood::setState, HoodState.DYNAMIC));
+    //turret tracks target
+    m_driverController.y().onTrue(new ParallelCommandGroup(new InstantCommand(() -> turret.setState(TurretState.DYNAMIC)), new InstantCommand(() -> visionManager.setLeds(true))));
+    m_driverController.y().onFalse(new InstantCommand(() -> visionManager.setLeds(false)));
   }
 
   /**

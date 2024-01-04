@@ -40,6 +40,8 @@ public class Spindexer extends SubsystemBase{
 
     private LiveNumber rampRate = new LiveNumber("spindexer Ramp Rate", SpindexerConstants.SPINDEXER_RAMP_RATE);
 
+    private double invert = 1;
+
     private LiveNumber customSpeed = new LiveNumber("spindexer speed", 0);
 
     public Spindexer(){
@@ -86,12 +88,16 @@ public class Spindexer extends SubsystemBase{
     }
 
     public void spin(double value){
-        spindexerMotor.set(ControlMode.PercentOutput, value);
+        spindexerMotor.set(ControlMode.PercentOutput, invert * value);
     }
 
     public void setState(SpindexerState newState){
         if(spindexerState != newState)
             spindexerState = newState;
+    }
+
+    public void setInverted(boolean isInverted){
+        invert = isInverted ? 1 : -1;
     }
 
     public SpindexerState getState(){

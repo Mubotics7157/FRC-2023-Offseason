@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -82,12 +83,13 @@ public class Shooter extends SubsystemBase{
     }
 
     public void logData(){
-        Logger.getInstance().recordOutput("Shooter/RPM", getRPM());
+        Logger.getInstance().recordOutput("Shooter/RPM Actual", getRPM());
         Logger.getInstance().recordOutput("Shooter/State", getState().toString());
     }
 
     public void goToSetpoint(){
         shooterMaster.getPIDController().setReference(currentSetpoint, ControlType.kVelocity);
+        Logger.getInstance().recordOutput("Shooter/RPM Wanted", currentSetpoint);
     }
     
     public void trackTarget(){
@@ -149,5 +151,7 @@ public class Shooter extends SubsystemBase{
         SparkMaxPIDController controller = shooterMaster.getPIDController();
         controller.setP(ShooterConstants.SHOOTER_KP);
         controller.setP(ShooterConstants.SHOOTER_KF);
+
+        shooterMaster.burnFlash();
     }
 }

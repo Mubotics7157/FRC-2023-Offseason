@@ -56,7 +56,9 @@ public class ShooterManager extends SubsystemBase{
                 break;
 
             case STOW:
-                setAll(Setpoints.TURRET_STOW, Setpoints.HOOD_STOW, 0);
+                //setAll(Setpoints.TURRET_STOW, Setpoints.HOOD_STOW, 0);
+                hood.setState(HoodState.STOW);
+                shooter.setState(ShooterState.OFF);
             break; 
             
             case AUTO:
@@ -69,10 +71,18 @@ public class ShooterManager extends SubsystemBase{
             
 
             case CUSTOM:
+            /* 
                 setAll(
                     Rotation2d.fromDegrees(customTurret.get()),
                     customHood.get(),
                     customShooter.get());
+                    */
+
+                shooter.setState(ShooterState.SETPOINT);
+                shooter.setSetpoint(customShooter.get());
+
+                hood.setState(HoodState.SETPOINT);
+                hood.setSetpoint(customHood.get());
                 break;
 
             case ZERO:

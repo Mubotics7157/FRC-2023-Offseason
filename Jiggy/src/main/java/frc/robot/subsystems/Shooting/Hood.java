@@ -31,6 +31,7 @@ public class Hood extends SubsystemBase{
         JOG,
         SETPOINT,
         DYNAMIC,
+        STOW,
         ZERO
     }
     
@@ -78,6 +79,10 @@ public class Hood extends SubsystemBase{
                 //SmartDashboard.putNumber("interpolated hood angle", currentSetpoint.getDegrees());
                 break;
 
+            case STOW:
+                stow();
+                break;
+
             case ZERO:
                 zeroRoutine();
                 break;
@@ -85,13 +90,14 @@ public class Hood extends SubsystemBase{
     }
 
     private void logData(){
-        Logger.getInstance().recordOutput("Hood/Position", getAngle());
-        Logger.getInstance().recordOutput("Hood/At Setpoint", atSetpoint());
+        Logger.getInstance().recordOutput("Hood/Position Actual", getAngle());
+        //Logger.getInstance().recordOutput("Hood/At Setpoint", atSetpoint());
         Logger.getInstance().recordOutput("Hood/Mag sensor", limSwitch.get());
     }
 
     private void goToSetpoint(){
         hoodMotor.getPIDController().setReference(currentSetpoint, ControlType.kPosition);
+        Logger.getInstance().recordOutput("Hood/Position Wanted", currentSetpoint);
     }
 
     public void jog(double value){
@@ -114,15 +120,7 @@ public class Hood extends SubsystemBase{
         return Math.abs(getAngle() - currentSetpoint) < 2;
     }
 
-    public void trackTarget(){
-        if(VisionManager.getInstance().getTurretLL().hasTargets())
-            currentSetpoint = shotGen.getInterpolatedHood(VisionManager.getInstance().getDistanceToTarget());
-
-        goToSetpoint();
-    }
-
-    public void zeroRoutine(){
-
+    public void stow(){
         if(limSwitch.get() != HoodConstants.MAG_DETECTED){ //if switch is not hit
             hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, false);
             hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
@@ -134,6 +132,29 @@ public class Hood extends SubsystemBase{
             hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
             jog(0);
             hoodMotor.getEncoder().setPosition(0);
+        }
+    }
+
+    public void trackTarget(){
+        if(VisionManager.getInstance().getTurretLL().hasTargets())
+            currentSetpoint = shotGen.getInterpolatedHood(VisionManager.getInstance().getDistanceToTarget());
+
+        goToSetpoint();
+    }
+
+    public void zeroRoutine(){
+        if(limSwitch.get() != HoodConstants.MAG_DETECTED){ //if switch is not hit
+            hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, false);
+            hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
+            jog(-0.1);
+        }
+
+        else{ //if the switch is hit
+            hoodMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+            hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+            jog(0);
+            hoodMotor.getEncoder().setPosition(0);
+            setState(HoodState.OFF);
         }
     }
 
@@ -170,6 +191,8 @@ public class Hood extends SubsystemBase{
         hoodMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
         hoodMotor.getPIDController().setP(HoodConstants.HOOD_KP);
+
+        hoodMotor.burnFlash();
     }
     
 }
