@@ -111,10 +111,8 @@ public class Drive extends SubsystemBase{
         Logger.getInstance().recordOutput("Drive/left speed wanted", modifiedLeft);
         Logger.getInstance().recordOutput("Drive/right speed wanted", modifiedRight);
 
-        //SmartDashboard.putNumber("left error", Math.abs(leftMPS - getLeftSpeed()));
-        //SmartDashboard.putNumber("right error", Math.abs(rightMPS - getRightSpeed()));
         Logger.getInstance().recordOutput("Drive/left error", modifiedLeft - getLeftSpeed());
-        Logger.getInstance().recordOutput("Drive/right errr", modifiedRight - getRightSpeed());
+        Logger.getInstance().recordOutput("Drive/right error", modifiedRight - getRightSpeed());
 
         if(leftSpeed == 0)
             leftMaster.set(ControlMode.PercentOutput, 0);
