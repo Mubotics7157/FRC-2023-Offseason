@@ -107,12 +107,7 @@ public class Turret extends SubsystemBase{
     }
 
     public void logData(){
-        //SmartDashboard.putNumber("shooter actual position", getAngle().getDegrees());
-        //SmartDashboard.putNumber("shooter wanted position", currentSetpoint.getDegrees());
-        //Logger.getInstance().recordOutput("Turret/State", getState().toString());
-        Logger.getInstance().recordOutput("Turret/Tracking Error", rotationController.getPositionError());
         Logger.getInstance().recordOutput("Turret/Position Actual", getAngle().getDegrees());
-        Logger.getInstance().recordOutput("Turret/Mag Sensor", limSwitch.get());
         Logger.getInstance().recordOutput("Turret/State", getState().toString());
     }
 

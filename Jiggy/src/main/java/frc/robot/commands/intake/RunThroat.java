@@ -1,6 +1,7 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Intaking.Spindexer;
 import frc.robot.subsystems.Intaking.Throat;
 import frc.robot.subsystems.Intaking.Throat.ThroatState;
 
@@ -17,6 +18,8 @@ public class RunThroat extends CommandBase{
 
     @Override
     public void initialize() {
+        Spindexer.getInstance().setInverted(false);
+
         if(up){
             throat.setState(ThroatState.SHOOTING);
         }

@@ -97,7 +97,7 @@ public class Intake extends SubsystemBase{
 
     private void goToPosition(double position){
         actuatorMotor.set(ControlMode.MotionMagic, position);
-        //actuatorMotor.set(ControlMode.Position, position);
+        Logger.getInstance().recordOutput("Intake/Actuator Position Wanted", position);
     }
 
     private void jogIntake(double value){
@@ -129,6 +129,7 @@ public class Intake extends SubsystemBase{
     public void logData(){
         Logger.getInstance().recordOutput("Intake/Actuator Position", getPosition());
         Logger.getInstance().recordOutput("Intake/Intake RPM Actual", getRPM());
+        Logger.getInstance().recordOutput("Intake/State", getState().toString());
     }
 
     public double getPosition(){

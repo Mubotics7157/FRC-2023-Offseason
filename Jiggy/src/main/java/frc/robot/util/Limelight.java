@@ -35,6 +35,10 @@ public class Limelight {
 
     }
 
+    public boolean areLedsOn(){
+        return tableLime.getEntry("ledMode").getDouble(0) == 3;
+    }
+
     public Rotation2d getTargetYaw(){
         if(hasTargets())
             return Rotation2d.fromDegrees(tableLime.getEntry("tx").getDouble(0));

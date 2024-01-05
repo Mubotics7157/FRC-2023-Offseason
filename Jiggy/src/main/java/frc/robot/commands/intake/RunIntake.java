@@ -2,6 +2,7 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intaking.IntakeManager;
+import frc.robot.subsystems.Intaking.Spindexer;
 import frc.robot.subsystems.Intaking.IntakeManager.IntakeManagerState;
 
 public class RunIntake extends CommandBase{
@@ -16,6 +17,7 @@ public class RunIntake extends CommandBase{
 
     @Override
     public void initialize() {
+        Spindexer.getInstance().setInverted(true);
         intakeManager.setState(IntakeManagerState.INTAKING);
     }
 

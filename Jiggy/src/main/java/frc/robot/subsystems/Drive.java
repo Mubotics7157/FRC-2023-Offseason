@@ -52,8 +52,8 @@ public class Drive extends SubsystemBase{
 
     private LiveNumber driveP = new LiveNumber("drive kP", DriveConstants.driveKP);
 
-    private SlewRateLimiter leftLimiter = new SlewRateLimiter(3, -3, 0);
-    private SlewRateLimiter rightLimiter = new SlewRateLimiter(3, -3, 0);
+    private SlewRateLimiter leftLimiter = new SlewRateLimiter(4, -4, 0);
+    private SlewRateLimiter rightLimiter = new SlewRateLimiter(4, -4, 0);
     public Drive(){
         gyro.reset();
 
@@ -100,31 +100,33 @@ public class Drive extends SubsystemBase{
     }
     
     public void setSpeeds(double leftMPS, double rightMPS){
+        double modifiedLeft = leftLimiter.calculate(leftMPS);
+        double modifiedRight = rightLimiter.calculate(rightMPS);
 
-        double leftSpeed = CommonConversions.metersPerSecToStepsPerDecisec(leftMPS, DriveConstants.WHEEL_DIAMETER_METERS);
-        double rightSpeed = CommonConversions.metersPerSecToStepsPerDecisec(rightMPS, DriveConstants.WHEEL_DIAMETER_METERS);
+        double leftSpeed = CommonConversions.metersPerSecToStepsPerDecisec(modifiedLeft, DriveConstants.WHEEL_DIAMETER_METERS);
+        double rightSpeed = CommonConversions.metersPerSecToStepsPerDecisec(modifiedRight, DriveConstants.WHEEL_DIAMETER_METERS);
 
         //SmartDashboard.putNumber("wanted left", leftMPS);
         //SmartDashboard.putNumber("wanted right", rightMPS);
-        Logger.getInstance().recordOutput("Drive/left speed wanted", leftMPS);
-        Logger.getInstance().recordOutput("Drive/right speed wanted", rightMPS);
+        Logger.getInstance().recordOutput("Drive/left speed wanted", modifiedLeft);
+        Logger.getInstance().recordOutput("Drive/right speed wanted", modifiedRight);
 
         //SmartDashboard.putNumber("left error", Math.abs(leftMPS - getLeftSpeed()));
         //SmartDashboard.putNumber("right error", Math.abs(rightMPS - getRightSpeed()));
-        Logger.getInstance().recordOutput("Drive/left error", leftMPS - getLeftSpeed());
-        Logger.getInstance().recordOutput("Drive/right errr", rightMPS - getRightSpeed());
+        Logger.getInstance().recordOutput("Drive/left error", modifiedLeft - getLeftSpeed());
+        Logger.getInstance().recordOutput("Drive/right errr", modifiedRight - getRightSpeed());
 
         if(leftSpeed == 0)
             leftMaster.set(ControlMode.PercentOutput, 0);
         else
             leftMaster.set(ControlMode.Velocity, leftSpeed, 
-                DemandType.ArbitraryFeedForward, DriveConstants.DRIVE_FEEDFORWARD.calculate(leftMPS) / 12);
+                DemandType.ArbitraryFeedForward, DriveConstants.DRIVE_FEEDFORWARD.calculate(modifiedLeft) / 12);
         
         if(rightSpeed == 0)
             rightMaster.set(ControlMode.PercentOutput, 0);
         else
             rightMaster.set(ControlMode.Velocity, rightSpeed,
-                DemandType.ArbitraryFeedForward, DriveConstants.DRIVE_FEEDFORWARD.calculate(rightMPS) / 12);
+                DemandType.ArbitraryFeedForward, DriveConstants.DRIVE_FEEDFORWARD.calculate(modifiedRight) / 12);
     }
 
     public double getLeftDistance(){

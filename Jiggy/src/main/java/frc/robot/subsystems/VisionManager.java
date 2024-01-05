@@ -65,5 +65,5 @@ public class VisionManager extends SubsystemBase{
         turretLL.setLEDs(on);
     }
 
-    
+
 }

@@ -41,7 +41,7 @@ public class Throat extends SubsystemBase{
                 break;
             
             case SHOOTING:
-                jogThroat(0.3);
+                jogThroat(0.35);
                 break;
             
             case UNCLOGGING:

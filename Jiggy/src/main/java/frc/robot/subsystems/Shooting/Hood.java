@@ -91,8 +91,8 @@ public class Hood extends SubsystemBase{
 
     private void logData(){
         Logger.getInstance().recordOutput("Hood/Position Actual", getAngle());
-        //Logger.getInstance().recordOutput("Hood/At Setpoint", atSetpoint());
         Logger.getInstance().recordOutput("Hood/Mag sensor", limSwitch.get());
+        Logger.getInstance().recordOutput("Hood/State", getState().toString());
     }
 
     private void goToSetpoint(){

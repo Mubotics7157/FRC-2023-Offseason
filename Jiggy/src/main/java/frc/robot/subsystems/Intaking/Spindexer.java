@@ -1,6 +1,8 @@
 package frc.robot.subsystems.Intaking;
 
 
+import javax.lang.model.util.ElementScanner14;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -58,6 +60,7 @@ public class Spindexer extends SubsystemBase{
 
     @Override
     public void periodic() {
+        logData();
         
         switch(spindexerState){
             case OFF:
@@ -69,11 +72,10 @@ public class Spindexer extends SubsystemBase{
                 break;
             
             case IDLE:
-                spin(0.2);
+                spin(0.15);
                 break;
             
             case INTAKING:
-                //spin(SpindexerConstants.INTAKING_SPEED);
                 spin(0.15);
                 break;
             
@@ -104,12 +106,20 @@ public class Spindexer extends SubsystemBase{
         invert = isInverted ? 1 : -1;
     }
 
+    public void toggleIndexer(){
+        if(invert == -1)
+            invert = 1;
+        else
+            invert = -1;
+    }
+
     public SpindexerState getState(){
         return spindexerState;
     }
 
     public void logData(){
         Logger.getInstance().recordOutput("Spindexer/Amps", spindexerMotor.getStatorCurrent());
+        Logger.getInstance().recordOutput("Spindexer/State", getState().toString());
     }
 
     public void configGains(){

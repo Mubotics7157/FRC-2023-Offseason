@@ -59,7 +59,7 @@ public class ShooterManager extends SubsystemBase{
                 //setAll(Setpoints.TURRET_STOW, Setpoints.HOOD_STOW, 0);
                 hood.setState(HoodState.STOW);
                 shooter.setState(ShooterState.OFF);
-            break; 
+                break; 
             
             case AUTO:
                 setTracking();

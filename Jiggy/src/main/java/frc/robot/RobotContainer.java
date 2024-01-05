@@ -22,6 +22,7 @@ import frc.robot.commands.shooter.JogTurret;
 import frc.robot.commands.shooter.SetCustom;
 import frc.robot.commands.shooter.SetFieldOriented;
 import frc.robot.commands.shooter.SetFinding;
+import frc.robot.commands.shooter.ToggleLeds;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.PathHandler;
 import frc.robot.subsystems.Tracker;
@@ -142,7 +143,7 @@ public class RobotContainer {
     //turns  on field oriented turret control
     m_driverController.button(8).onTrue(new SetFinding(turret));
     
-    m_driverController.y().onTrue(new InstantCommand(() -> visionManager.setLeds(false)));
+    m_driverController.y().onTrue(new ToggleLeds(visionManager));
 
     //resets heading
     m_driverController.button(7).onTrue(new InstantCommand(tracker::resetHeading));
